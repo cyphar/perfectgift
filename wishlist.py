@@ -21,7 +21,7 @@ def format_price(price):
     return str(price)
 
 def display_name(user):
-  return user.fname + " '" + user.username + "' " + user.lname
+  return "%s %s (%s)" % (user.fname, user.lname, user.username)
 
 def index(response, username):
     logged_in = get_current_user(response)
