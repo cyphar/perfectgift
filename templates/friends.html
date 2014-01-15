@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+		<head>
+	    {% include head.html %}
+      <title>Wishlist: Friends</title>
+    </head>
+    <body class="small-header photo1">
+    <article>
+        <section>
+        <h2>Connect and share gifts today...</h2>
+        </section>
+        {% include header.html %}
+        <section id="friend-list" class="clearfix">
+            {% for friend in friends %}
+                    <div class="item">
+                        <figure>
+                            <img src="{{ friend.get_profile_image() }}" />
+                            <a class="item-title" href="{{ "/users/"+friend.username }}" >
+                                <figcaption><h2>{{ friend.fname + " " + friend.lname }}</h2></figcaption>
+                            </a>
+                            <p><h6>{{ friend.username }}</h6></p>
+                         </figure>
+                    </div>
+            {% end for %}
+        </section>
+    </article>
+    <script>
+    
+        $("#friend-list").masonry({
+            "gutter": 10,
+            "itemSelector": ".item",
+            "isFitWidth": true
+        });
+    </script>
+      {% include footer.html %}   
+    </body>
+</html>

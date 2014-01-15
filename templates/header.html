@@ -1,0 +1,27 @@
+<div id="hero">
+    <div id="cover"></div>
+    <h1>The easy way to buy gifts for friends</h1>
+    <ul>
+        <li>Homewares</li>
+        <li>Fashion</li>
+        <li>Tech</li>
+        <li>Art &amp; Design</li>
+        <li>Accessories</li>
+        <li>Food</li>
+        <li>Posters &amp; Prints</li>
+    </ul>
+</div>
+<header>   
+   <img src="/static/images/logo.png" alt="Logo" class="logo"/>
+      <nav>
+        <a href="/">Home</a>
+        <a href="/search">Search</a>
+        {% if logged_in %}
+            <a href="/mywishlist">My Wishlist</a>
+            <a href="/friends">My Friends</a>
+            <a href="/logout">Logout</a>
+        {% else %}
+            <a href="/login">Login / Create Account</a>
+        {% end if %}
+      </nav>
+</header>

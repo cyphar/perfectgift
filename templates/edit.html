@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+		<head>
+	    {% include head.html %}
+      <title>Wishlist: {{ listname }}</title>
+    </head>
+    <body class="small-header photo1">
+        {% include header.html %}
+        
+        <article>
+        {% if logged_in and is_current_users_wishlist_page %}
+          <form id="add-wish" method="POST" action="/users/{{username}}/edit_item/{{product.product_id}}">
+            <legend>Edit Wish</legend>
+            <fieldset>
+              <span id="form-box1"><label>Wish Name:</label> <input placeholder="e.g. A Puppy (required)" type="text" name="wish" value="{{ product.name }}"/>
+            	<label>Price:</label> <input type="text" name="price" placeholder="estimate (e.g. Free-$80)" value="{{product.price}}"/>
+                <br /><br /><br />
+                <label id="website-label">URL:</label> <input type="text" id="website" name="website" placeholder="e.g. www.example.com" value="{{product.link}}"/></span>
+              <span id="form-box2">
+              <label>Description:</label> <textarea type="text" name="description" placeholder="e.g. I want a puppy" rows="3">{{product.description}}</textarea></span>
+          	  <input type="submit" />
+            </fieldset>
+          </form>
+        {% end if %}
+        </article>
+    {% include footer.html %}                
+    </body>
+</html>

@@ -1,0 +1,385 @@
+@charset "utf-8";
+
+/* search.html */
+.search-form {
+    position: relative;
+    width: 940px;
+    height: 36px;
+    margin: 10px;
+    vertical-align: top;
+    padding: 15px;
+}
+.search-form input[type="search"] {
+    height: 34px;
+    width: 875px;
+    font-size: 28px;
+}
+
+.search-submit{
+    right: 20px;
+    top: 12px;
+    position: absolute;
+}
+
+.search-center-msg{
+    width: 100%;
+    text-align: center;
+    margin-bottom: 280px;
+}
+.search-no-results{
+    color: #999;
+}
+.search-item{
+    display: block;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    background-color: #eee;
+    margin: 10px;
+    width: 100%;
+    border-radius: 5px;
+    font-weight: bold;
+    position: relative;
+}
+.search-item-price-right{
+    right: 10px;
+    position: absolute;
+}
+.search-item a{
+    text-decoration: none;
+}
+.search-item a:visited{
+    color: blue;
+    text-decoration: none;
+}
+.search-item-holder{
+    width: 100%;
+}
+.search-item-holder li:first-child{
+    margin-top: 0px;
+}
+
+/* end search.html */
+.home-img {
+	display: block;
+	margin: 35px;
+	float: left;
+	text-align: center;
+}
+
+.aboutText {
+    text-align: center;
+}
+
+.img-justify {
+	width: 100%;
+	text-align: justify;	
+}
+.title_about {
+    margin-bottom: 35px;
+	margin-left: 11px;
+}
+
+.img_unmargin {
+    margin: 0px;
+}
+
+.error_centre {
+	text-align: center;
+}
+
+h1-error {
+	font: bold 40px/44px;
+	margin: auto 0px 40px auto;
+}
+
+#create-account-button {
+	background-color: #eee;
+	border: 1px #ddd solid;
+	padding: 10px;
+	border-radius: 10px;
+	font: bold 20px/22px;
+	margin-right: 30px;
+    position: left: 100px;
+    margin-bottom: 10px;
+	color: black;
+	text-decoration: none;
+	float: right;
+}
+
+/* Login/Create */
+
+#account-forms { text-align: center; }
+
+	#account-forms > form {
+		background-color: #eee;
+		display: inline-block;
+		padding: 10px;
+		margin: 10px;
+		height: 345px;
+		vertical-align: top;
+        padding-bottom: 21px;
+        padding-top: 16px;
+	}
+ 
+#create-form label, #create-form input, #create-form button,
+#login-form label, #login-form input, #login-form button {
+    margin-top: 10px;
+}
+	
+#login-form {
+	position: relative;
+	top: 50%;
+}
+#login-form p {
+    margin: 73px 0;
+}
+
+.error-msg {
+	background-color: #ebacac;
+	border-radius: 10px;
+	padding: 5px;
+	text-align: center;
+	margin: 240px 20px -220px 0px;
+}
+
+/* Wishlist/Profile page */
+
+#upload-profile-image {
+	display: none;
+}
+
+#profile-img {
+	max-width: 100px;
+	max-height: 100px;
+	float: left;
+	margin: 5px 20px;
+}
+
+.prod-image {
+    width: 80px;
+    height: 80px;
+}
+
+.selected {
+    -moz-box-shadow: 0px 0px 18px #000;
+    -webkit-box-shadow: 0px 0px 18px #000;
+    box-shadow: 0px 0px 18px #000;
+}
+
+#display-name { margin-top: 0; }
+
+hr {
+	position: relative;
+	left: 12.5%;
+	border: 0;
+	height: 1px;
+	width: 75%;
+	background-image: -webkit-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.25), rgba(0,0,0,0));
+	background-image: -moz-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.25), rgba(0,0,0,0));
+	background-image: -ms-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.25), rgba(0,0,0,0));
+	background-image: -o-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.25), rgba(0,0,0,0));
+}
+
+#add_friend {
+	background-color: #eee;
+	border: 1px #ddd solid;
+	padding: 10px;
+	border-radius: 10px;
+	font: bold 20px/22px;
+	float: right;
+	margin-right: 30px;
+	color: black;
+	text-decoration: none;
+}
+
+#add-wish {
+	width: 940px;
+	position: relative;
+}
+
+#add-wish p {
+	vertical-align: top;
+	margin: 10px 1% 0;
+	text-align: right;
+}
+
+#add-wish span {
+	display: inline-block;
+	
+}
+
+#add-prod-select {
+  display: flex;
+	vertical-align: middle;
+}
+
+#form-box1 { width: 45%; }
+#form-box2 { width: 54%; }
+#form-box2 > label { padding-left: 40px; }
+#form-box1 #website, #form-box1 #website-label { bottom: 8px; position: relative; }
+
+#add-wish label {
+	text-align: right;
+	vertical-align: top;
+}
+
+#add-wish input[type=submit] {
+	position: relative;
+	left: 90%;
+	margin: 0;
+	vertical-align: top;
+}
+
+#add-wish input[type=text],
+#add-wish textarea {
+	width: 70%;
+}
+
+/*#form-box1 input[type=text], #form-box1 label {
+	position: relative;
+	bottom: 20px;
+}*/
+
+/* Product List */
+
+#product-list { width: 980px; margin: auto 10px;}
+	
+#product-list > .item {
+	display: block;
+	margin-bottom: 10px;
+	width: 470px;
+}
+
+#product-list figure {
+	padding: 5px;
+	margin: 0;
+	border-radius: 10px;
+	border: 1px solid #ddd;
+}
+
+	#product-list figure:hover { border: 1px solid #aaa; }
+	
+	#product-list figcaption {
+		padding: 20px 0 0 90px;
+	}
+	
+	.product-item-descript { word-break: break-all; }
+
+.product-img {
+	width: 80px;
+	height: 80px;
+	float: left;
+	padding-bottom: 15px;
+	position: relative;
+	bottom: 6px;
+}
+
+.item-link-out {
+	width: 10px;
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+
+.delete,
+.edit {
+	border: none;
+	background: none;
+	margin: 0;
+	padding: 0;
+	outline: none;
+	position: absolute;
+}
+
+.delete {
+	right: 10px;
+	bottom: 25px;
+}
+
+.edit {
+	right: 40px;
+	bottom: 24px;
+}
+
+.delete:focus,
+.edit:focus {
+	border-radius: 5px;
+	border: 1px solid #b86977;
+}
+
+.delete img:hover
+.edit img:hover {
+	cursor: pointer;
+}
+
+.delete img,
+.edit img {
+	padding: 0;
+	margin: 0;
+}
+
+.edit img {
+	padding: 1px;
+}
+
+.delete img { width: 20px; }
+.edit img { width: 15px; }
+
+/* Friends page */
+#FeedItems li{
+	float: left;
+	padding: 10px;
+}
+
+#FeedItems li > img{
+	margin: 0;
+	border-radius: 15px;
+}
+
+#friend-list { width: 980px; margin: auto 10px;  }
+	
+#friend-list > div {
+	display: block;
+	margin-bottom: 10px;
+	width: 470px;
+}
+
+#friend-list figure {
+	padding: 5px;
+	margin: 0;
+	border-radius: 10px;
+	border: 1px solid #ddd;
+}
+
+	#friend-list figure:hover { border: 1px solid #aaa; }
+	
+	#friend-list figcaption {
+		padding: 10px 0 0 90px;
+		margin: 0 0 25px 0;
+	}
+
+#friend-list img {
+	width: 80px;
+	height: 80px;
+	float: left;
+	padding-bottom: 5px;
+}
+
+#friend-list h6 {
+	margin-bottom: 10px;
+}
+
+.item-title { font: bold 22px/24px; }
+
+a.item-title {
+	color: black;
+	text-decoration: none;
+}
+
+
+/* 404 Page */
+.center {
+	text-align: center;
+	margin: 0;
+}

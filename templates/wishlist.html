@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+		<head>
+	    {% include head.html %}
+      <title>Wishlist: {{ listname }}</title>
+    </head>
+    <body class="small-header photo1">
+
+        {% include header.html %}
+        {% include error_msg.html %}
+
+        <article>
+
+        {% if logged_in and not is_current_users_wishlist_page %}
+            {% if mutual_friend %}
+                <a href="/delete_friend/{{username}}?redirect={{response.request.uri}}" type='submit' id='add_friend' />Delete Friend</a>
+            {% else %}
+                {% if pending_friend_request %} {# we sent request #}
+                    <a href="/delete_friend/{{username}}?redirect={{response.request.uri}}" type='submit' id='add_friend' />Cancel Friend Request</a>
+                {% else %}
+                    {% if pending_friend_invite %} {# received request #}
+                        <a href="/add_friend/{{username}}?redirect={{response.request.uri}}" type='submit' id='add_friend' />Accept Friend Request</a>
+                    {% else %} {# no friend request in either direction #}
+                        <a href="/add_friend/{{username}}?redirect={{response.request.uri}}" type='submit' id='add_friend' />Add Friend</a>
+                    {% end if %}
+                {% end if %}
+            {% end if %}
+        {% end if %}
+            <section id="user-data" class="clearfix">
+                <figure>
+                    <img src="{{ profile_image_filename }}" alt="Profile Image" id="profile-img" />
+                    <figcaption>
+                        <h2>{{ current_user_fullname }}</h2>
+                        <h3>Wishes for {{ listname }}</h3>
+                    </figcaption>
+                </figure>
+                {% if logged_in and is_current_users_wishlist_page %}
+            <form id="upload-profile-image" method="POST" action="/users/{{ username }}/edit" enctype="multipart/form-data">
+                        <input type="file" name="profile-photo">
+                        <input type="submit">
+                    </form>
+                    {% end if %}
+            </section>
+
+        {% if logged_in and is_current_users_wishlist_page %}
+          <form id="add-wish" method="POST" action="/users/{{username}}/item">
+            <legend>Add New Wish</legend>
+            <fieldset>
+              <span id="form-box1"><label>Wish Name:</label> <input placeholder="e.g. A Puppy (required)" type="text" name="wish" />
+            	<label>Price:</label> <input type="text" name="price" placeholder="Estimate (e.g. Free-$80)" />
+                <br /><br /><br />
+                <label id="website-label">URL:</label> <input type="text" id="website" name="website" placeholder="e.g. www.example.com" /></span>
+              <span id="form-box2">
+              <label>Description:</label> <textarea type="text" name="description" placeholder="e.g. I want a puppy." rows="3"></textarea></span>
+              <div id="imagesDiv" style="display:none"> Choose an image:
+                <span id="add-prod-select">
+                  {% for i in range(5) %}
+                  <img class="image-select prod-image" id="add-prod-img"/>
+                  {% end for %}
+                </span>
+              </div>
+              <input type="hidden" id="hidden-add-img" name="image" value="" />
+          	  <input type="submit" />
+            </fieldset>
+          </form>
+        {% else %}
+
+        {% end if %}
+          <section id="product-list" class="clearfix">
+          {% if products %}
+            {% for product in products %}
+              <div class="item">
+                <figure>
+                <img class="product-img" src="{{ product.image }}" />
+                <div class="item-title">
+                {% if product.link != '' and product.link != 'http://' %}
+                  <a href="{{ product.link }}" ><img class="item-link-out" src="/static/images/arrow.png" alt="Link Out" title="Link Out"/></a>
+                {% end if %}
+                {% if product.checked == 1 %}
+                  <figcaption><strike>{{ product.name }}</strike></figcaption>
+                {% else %}
+                  <figcaption>{{ product.name }}</figcaption>
+                {% end if %}
+              </div>
+            <p class="product-item-price">{{ product.price }}</p>
+            <p class="product-item-descript">{{ product.description }}</p>
+            {% if is_current_users_wishlist_page %}
+                	<button data-id="{{ product.product_id }}" class="delete"><img src="/static/images/trash.png" alt="Delete"></button>
+                 	<button onclick="location.href='/users/{{username}}/edit_item/{{ product.product_id }}'" class="edit"><img src="/static/images/pencil.png" alt="Edit"></button>
+               	{% end if %}
+               </figure>
+             </div>
+           {% end for %}
+           {% else %}
+            <!--<h1>This user does not have any items in their wishlist</h1>-->
+           {% end if%}
+          </section>
+        </article>
+
+    	{% include footer.html %}
+    </body>
+    <script>
+        var bricks = $("#product-list").masonry({
+            "gutter": 10,
+            "itemSelector": ".item",
+            "isFitWidth": true
+        });
+
+        $('.item .delete').click(function (event) {
+			var button = $(this);
+            var id = button.data('id');
+
+            $.ajax("/users/{{username}}/item/" + id, {type:"delete"}).success(function() {
+                $(button).parent().parent().remove();
+                bricks.masonry();
+            })
+        });
+
+        $('#profile-img').click(function (event) {
+            $('#upload-profile-image').toggle();
+        });
+
+        $('#website').change(function (event) {
+            var url = $("#website").val();
+            var upd = $.ajax({
+                dataType: "json",
+                type: "POST",
+                url: "/ajax/scrape",
+                data: {'scrape_url' : url},
+                success: (function (data) {
+                    $('#imagesDiv').show();
+                    var img = data['images'];
+
+                    /* reset all of them */
+                    $("#add-prod-select img").each(function (index) {
+                        $(this).attr("src", "");
+                    });
+
+                    $("#add-prod-select img").each(function (index) {
+                        if(index > img.length)
+                            return;
+
+                        $(this).attr("src", img[index]);
+                    });
+                })
+            });
+        });
+
+        $(document).ready(function () {
+            var images = $("#add-prod-select img");
+
+            $("#add-prod-select img").click(function (thing) {
+                $("#add-prod-select img").each(function (index) {
+                    $(this).removeClass("selected");
+                });
+
+                $(this).addClass("selected");
+                $("#hidden-add-img").val($(this).attr("src"));
+            });
+        });
+     </script>
+</html>
+

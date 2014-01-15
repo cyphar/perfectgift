@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		{% include head.html %}
+        {% if logged_in %}
+          <title>Home | {{logged_in}}</title>
+        {% else %}
+          <title>Home</title>
+        {% end if %}
+        
+		
+	</head>
+  <body class="large-header photo1" >
+    {% include header.html %}
+    <article>
+      {% if not logged_in %}
+    	  <a href="/login" id="create-account-button">Create Account Now</a>
+      {% end if %}
+        <p class="aboutText">Perfect Gift allows people to create a wish list for any occasion. You can then share it with all your friends, to help them decide what gift to give you. It's present buying made easy. So, create an account today!</p>
+    	</article> <!-- End of content -->
+		{% include footer.html %}
+    </body>
+</html>
