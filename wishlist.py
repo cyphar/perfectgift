@@ -14,10 +14,9 @@ from scrape import scrape
 from friends import search, friends_list
 
 def format_price(price):
-    if re.search(r'^\$?\d{1,3}(,?\d{3})*(\.[0-9]+)?$', price):
-        if '$' in price:
-            price = price.replace('$', '')
-        return "$"+str("{0:.2f}".format(float(price), 2))
+    if re.match(r'^\$?\d{1,3}(,?\d{3})*(\.[0-9]+)?$', price):
+        price = price.replace('$', '').replace(',', '')
+        return "${0:.2f}".format(float(price)))
     return str(price)
 
 def display_name(user):
