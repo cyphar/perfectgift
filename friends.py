@@ -1,5 +1,5 @@
 from tornado.ncss import Server
-from DBAPI import User, UserNotFound
+from db import User, UserNotFound
 from login import  logged_in, get_current_user
 import epyc
 import sqlite3

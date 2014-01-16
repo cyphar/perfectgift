@@ -8,7 +8,7 @@ import re
 
 from tornado.ncss import Server
 from login import *
-from DBAPI import User, Wishlist, Product, UserNotFound
+from db import User, Wishlist, Product, UserNotFound
 from urllib.parse import urlencode
 from scrape import scrape
 from friends import search, friends_list
