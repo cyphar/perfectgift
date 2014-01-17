@@ -128,6 +128,15 @@
             $('#upload-profile-image').toggle();
         });
 
+		$("#add-prod-select img").click(function (thing) {
+			$("#add-prod-select img").each(function (index) {
+				$(this).removeClass("selected");
+			});
+
+			$(this).addClass("selected");
+			$("#hidden-add-img").val($(this).attr("src"));
+		});
+
         $('#website').change(function (event) {
             var url = $("#website").val();
             var upd = $.ajax({
@@ -144,26 +153,19 @@
                         $(this).attr("src", "");
                     });
 
-                    $("#add-prod-select img").each(function (index) {
-                        if(index > img.length)
-                            return;
+					if(img) {
+						$("#add-prod-select img").each(function (index) {
+							if(index > img.length)
+								return;
 
-                        $(this).attr("src", img[index]);
-                    });
+							$(this).attr("src", img[index]);
+						});
+					}
+
+					/* Update selection */
+					var selected = $("#add-prod-select").find(".selected").first();
+					$("#hidden-add-img").val($(selected).attr("src"));
                 })
-            });
-        });
-
-        $(document).ready(function () {
-            var images = $("#add-prod-select img");
-
-            $("#add-prod-select img").click(function (thing) {
-                $("#add-prod-select img").each(function (index) {
-                    $(this).removeClass("selected");
-                });
-
-                $(this).addClass("selected");
-                $("#hidden-add-img").val($(this).attr("src"));
             });
         });
      </script>
