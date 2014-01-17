@@ -12,7 +12,8 @@
 .search-form input[type="search"] {
 	height: 34px;
 	width: 875px;
-	font-size: 28px;
+	font-size: 16px;
+	padding: 5px;
 }
 
 .search-form button[type="submit"] {
