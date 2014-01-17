@@ -7,48 +7,48 @@
 
 	<body class="small-header photo1">
 
-    {% include header.html %}
-    {% include error_msg.html %}
+	{% include header.html %}
+	{% include error_msg.html %}
 
-    <article id="account-forms" class="clearfix" >
-    	<form action="/login" id="login-form" method="post">
-      	<legend>Login</legend>
-      	<fieldset>
-          <p>
-            <label>Name</label>
-            <input type="text" name="uid" />
-          </p><p>
-            <label>Password</label>
-            <input type="password" name="pwd" />
-          </p><p>
-          	<button type="submit">Login</button>
-          </p>
-        </fieldset>
-      </form>
-      <form action="/signup" id="create-form" method="post" autocomplete="off">
-      	<legend>Create Account</legend>
-        <fieldset>
-        	<p>
-          	<label>First Name</label>
-            <input type="text" name="fname" {% if fname %} value="{{ fname }}" {% end if %} />
-          </p><p>
-          	<label>Last Name</label>
-            <input type="text" name="lname" {% if lname %} value="{{ lname }}" {% end if %} />
-          </p><p>
-          	<label>Email</label>
-            <input type="text" name="email" {% if email %} value="{{ email }}" {% end if %} />
+	<article id="account-forms" class="clearfix" >
+		<form action="/login" id="login-form" method="post">
+	  	<legend>Login</legend>
+	  	<fieldset>
+		  <p>
+			<label>Name</label>
+			<input type="text" name="uid" />
+		  </p><p>
+			<label>Password</label>
+			<input type="password" name="pwd" />
+		  </p><p>
+		  	<button type="submit">Login</button>
+		  </p>
+		</fieldset>
+	  </form>
+	  <form action="/signup" id="create-form" method="post" autocomplete="off">
+	  	<legend>Create Account</legend>
+		<fieldset>
+			<p>
+		  	<label>First Name</label>
+			<input type="text" name="fname" {% if fname %} value="{{ fname }}" {% end if %} />
+		  </p><p>
+		  	<label>Last Name</label>
+			<input type="text" name="lname" {% if lname %} value="{{ lname }}" {% end if %} />
+		  </p><p>
+		  	<label>Email</label>
+			<input type="text" name="email" {% if email %} value="{{ email }}" {% end if %} />
 					</p><p>
-            <label>Username</label>
-            <input type="text" name="username" {% if username %} value="{{ username }}" {% end if %} />
-          </p><p>
-          	<label>Password</label>
-            <input type="password" name="password"/>
-          </p><p>
-        		<button type="submit">Create Account</button>
-        	</p>
-        </fieldset>
-      </form>
-    </article> <!-- End of content -->
+			<label>Username</label>
+			<input type="text" name="username" {% if username %} value="{{ username }}" {% end if %} />
+		  </p><p>
+		  	<label>Password</label>
+			<input type="password" name="password"/>
+		  </p><p>
+				<button type="submit">Create Account</button>
+			</p>
+		</fieldset>
+	  </form>
+	</article> <!-- End of content -->
 		{% include footer.html %}
 	</body>
 </html>

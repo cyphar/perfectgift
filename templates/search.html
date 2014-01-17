@@ -1,36 +1,36 @@
 <html>
   <head>
-      {% include head.html %}
+	  {% include head.html %}
   </head>
   <body class="small-header photo1">
-      {% include header.html %}
-      <article>
-          <form name="search" action="/search" method="get" class="search-form">
-              <input type="search" name="search" placeholder="Who are you looking for? e.g. barry" value="{{query}}">
+	  {% include header.html %}
+	  <article>
+		  <form name="search" action="/search" method="get" class="search-form">
+			  <input type="search" name="search" placeholder="Who are you looking for? e.g. barry" value="{{query}}">
 			  <button type="submit">Search</button>
-              <input type="hidden" name="searchr" value="people">
-          </form>
-          <div class="search-item-holder">
-          {% if no_results %}
-            <h3 class="search-no-results"><p class="search-center-msg">No search results</p></h3>
-          {% end if %}
-          {% if results == [] %}
-            {% if should_have_results != None %}
-                <h3 class="search-no-results"><p class="search-center-msg">No search results</p></h3>
-            {% end if  %}
-          {% end if %}
-          {% if results_people != None %}
-              {% for result in results_people %}
-              <li class="search-item"><a href="/users/{{result.split()[2]}}"> {{result.split()[0]}} {{" "}} {{result.split()[1]}} </a></li>
-              {% end for %}
-          {% end if %}
-          {% if results_items != None %}
-              {% for result in results_items %}
-              <li class="search-item"><a href="{{result.split()[4]}}"> {{result[1]}} </a> - {{result[2]}} <span class="search-item-price-right">{{result[3]}}<span> </li>
-              {% end for %}
-          {% end if %}
-          </div>
-      </article>
-      {% include footer.html %}
+			  <input type="hidden" name="searchr" value="people">
+		  </form>
+		  <div class="search-item-holder">
+		  {% if no_results %}
+			<h3 class="search-no-results"><p class="search-center-msg">No search results</p></h3>
+		  {% end if %}
+		  {% if results == [] %}
+			{% if should_have_results != None %}
+				<h3 class="search-no-results"><p class="search-center-msg">No search results</p></h3>
+			{% end if  %}
+		  {% end if %}
+		  {% if results_people != None %}
+			  {% for result in results_people %}
+			  <li class="search-item"><a href="/users/{{result.split()[2]}}"> {{result.split()[0]}} {{" "}} {{result.split()[1]}} </a></li>
+			  {% end for %}
+		  {% end if %}
+		  {% if results_items != None %}
+			  {% for result in results_items %}
+			  <li class="search-item"><a href="{{result.split()[4]}}"> {{result[1]}} </a> - {{result[2]}} <span class="search-item-price-right">{{result[3]}}<span> </li>
+			  {% end for %}
+		  {% end if %}
+		  </div>
+	  </article>
+	  {% include footer.html %}
   </body>
 </html>
