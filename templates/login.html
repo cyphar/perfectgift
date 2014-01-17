@@ -4,12 +4,12 @@
    {% include head.html %}
    <title>Login/Create Account</title>
  </head>
- 
+
 	<body class="small-header photo1">
-    
+
     {% include header.html %}
     {% include error_msg.html %}
-    
+
     <article id="account-forms" class="clearfix" >
     	<form action="/login" id="login-form" method="post">
       	<legend>Login</legend>
@@ -21,7 +21,7 @@
             <label>Password</label>
             <input type="password" name="pwd" />
           </p><p>
-          	<button type="submit">Submit</button>
+          	<button type="submit">Login</button>
           </p>
         </fieldset>
       </form>
@@ -44,7 +44,7 @@
           	<label>Password</label>
             <input type="password" name="password"/>
           </p><p>
-        		<button type="submit">Submit</button>
+        		<button type="submit">Create Account</button>
         	</p>
         </fieldset>
       </form>

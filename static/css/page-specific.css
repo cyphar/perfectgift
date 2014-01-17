@@ -15,20 +15,22 @@
     font-size: 28px;
 }
 
-.search-submit{
+.search-form button[type="submit"] {
     right: 20px;
     top: 12px;
     position: absolute;
 }
 
-.search-center-msg{
+.search-center-msg {
     width: 100%;
     text-align: center;
     margin-bottom: 280px;
 }
-.search-no-results{
+
+.search-no-results {
     color: #999;
 }
+
 .search-item{
     display: block;
     padding-top: 10px;
@@ -73,7 +75,7 @@
 
 .img-justify {
 	width: 100%;
-	text-align: justify;	
+	text-align: justify;
 }
 .title_about {
     margin-bottom: 35px;
@@ -121,12 +123,12 @@ h1-error {
         padding-bottom: 21px;
         padding-top: 16px;
 	}
- 
+
 #create-form label, #create-form input, #create-form button,
 #login-form label, #login-form input, #login-form button {
     margin-top: 10px;
 }
-	
+
 #login-form {
 	position: relative;
 	top: 50%;
@@ -206,7 +208,7 @@ hr {
 
 #add-wish span {
 	display: inline-block;
-	
+
 }
 
 #add-prod-select {
@@ -224,7 +226,7 @@ hr {
 	vertical-align: top;
 }
 
-#add-wish input[type=submit] {
+#add-wish button[type=submit] {
 	position: relative;
 	left: 90%;
 	margin: 0;
@@ -244,7 +246,7 @@ hr {
 /* Product List */
 
 #product-list { width: 980px; margin: auto 10px;}
-	
+
 #product-list > .item {
 	display: block;
 	margin-bottom: 10px;
@@ -259,11 +261,11 @@ hr {
 }
 
 	#product-list figure:hover { border: 1px solid #aaa; }
-	
+
 	#product-list figcaption {
 		padding: 20px 0 0 90px;
 	}
-	
+
 	.product-item-descript { word-break: break-all; }
 
 .product-img {
@@ -338,7 +340,7 @@ hr {
 }
 
 #friend-list { width: 980px; margin: auto 10px;  }
-	
+
 #friend-list > div {
 	display: block;
 	margin-bottom: 10px;
@@ -353,7 +355,7 @@ hr {
 }
 
 	#friend-list figure:hover { border: 1px solid #aaa; }
-	
+
 	#friend-list figcaption {
 		padding: 10px 0 0 90px;
 		margin: 0 0 25px 0;

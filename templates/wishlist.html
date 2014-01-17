@@ -37,7 +37,7 @@
                 {% if logged_in and is_current_users_wishlist_page %}
             <form id="upload-profile-image" method="POST" action="/users/{{ username }}/edit" enctype="multipart/form-data">
                         <input type="file" name="profile-photo">
-                        <input type="submit">
+						<button type="submit">Change Profile Picture</button>
                     </form>
                     {% end if %}
             </section>
@@ -60,7 +60,7 @@
                 </span>
               </div>
               <input type="hidden" id="hidden-add-img" name="image" value="" />
-          	  <input type="submit" />
+			  <button type="submit">Add Item</button>
             </fieldset>
           </form>
         {% else %}
