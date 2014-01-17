@@ -5,6 +5,7 @@ import html
 import time
 import json
 import re
+import argparse
 
 from tornado.ncss import Server
 from login import *
@@ -213,24 +214,32 @@ def scrape_url(response):
     images = scrape(url)
     return response.write(json.dumps({"images": images}))
 
-server = Server(write_error = handle_error)
-server.register('/users/([a-zA-Z0-9_]+)', index) #view users profile
-server.register('/users/([a-zA-Z0-9_]+)/item', add_item) #add item
-server.register('/users/([a-zA-Z0-9_]+)/item/([a-zA-Z0-9_]+)', get_item, delete=delete_item)
-server.register('/users/([a-zA-Z0-9_]+)/edit_item/([a-zA-Z0-9_]+)', edit_item)
-server.register('/users/([a-zA-Z0-9_]+)/edit', edit_user)
-server.register('/friends', friends_list)
-server.register('/add_friend/([a-zA-Z0-9_]+)', add_friend)
-server.register('/delete_friend/([a-zA-Z0-9_]+)', delete_friend)
-server.register('/login',login)
-server.register('/logout',logout)
-server.register('/signup',signup)
-server.register('/ajax/scrape', scrape_url)
-server.register('/',home)
-server.register('/mywishlist', myWishlist)
-server.register('/feed', feed)
-server.register('/search',search)
-server.register('.*', handle_error)
+def run_server(serverport):
+    server = Server(write_error=handle_error, port=serverport)
 
+    server.register('/users/([a-zA-Z0-9_]+)', index) #view users profile
+    server.register('/users/([a-zA-Z0-9_]+)/item', add_item) #add item
+    server.register('/users/([a-zA-Z0-9_]+)/item/([a-zA-Z0-9_]+)', get_item, delete=delete_item)
+    server.register('/users/([a-zA-Z0-9_]+)/edit_item/([a-zA-Z0-9_]+)', edit_item)
+    server.register('/users/([a-zA-Z0-9_]+)/edit', edit_user)
+    server.register('/friends', friends_list)
+    server.register('/add_friend/([a-zA-Z0-9_]+)', add_friend)
+    server.register('/delete_friend/([a-zA-Z0-9_]+)', delete_friend)
+    server.register('/login',login)
+    server.register('/logout',logout)
+    server.register('/signup',signup)
+    server.register('/ajax/scrape', scrape_url)
+    server.register('/',home)
+    server.register('/mywishlist', myWishlist)
+    server.register('/feed', feed)
+    server.register('/search',search)
+    server.register('.*', handle_error)
 
-server.run()
+    server.run()
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Start a tornado server, running the 'perfectgift.com' website.")
+    parser.add_argument('-p', '--port', type=int, default=8888)
+    args = parser.parse_args()
+
+    run_server(args.port)
