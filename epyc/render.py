@@ -68,7 +68,12 @@ class ForNode(Node):
 			return None
 
 		for item in L:
-			scope[self.identifier] = item
+			try:
+				getnext = "%s = %r" % (self.identifier, item)
+				exec(getnext, {}, scope)
+			except:
+				return None
+
 			ret += self.block.render(scope, path) or ''
 
 		return ret
@@ -98,7 +103,7 @@ class IfNode(Node):
 		try:
 			cond = eval(self.condition, {}, scope)
 		except:
-			cond = False
+			return self.elsenode.render(scope, path)
 
 		if cond:
 			return self.ifnode.render(scope, path)
