@@ -78,3 +78,4 @@ if __name__ == "__main__":
 	<p>the end</p>'''
 
 	test_tokeniser(template)
+

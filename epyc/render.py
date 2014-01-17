@@ -118,7 +118,7 @@ class IfNode(Node):
 		try:
 			cond = eval(self.condition, {}, scope)
 		except:
-			return self.elsenode.render(scope, path)
+			cond = False
 
 		if cond:
 			return self.ifnode.render(scope, path)
