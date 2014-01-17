@@ -87,6 +87,7 @@ class Parser:
 
 				self.next(3)
 				return node
+
 			elif tp == "if":
 				# {% if <pred> %}
 				if not args:
@@ -106,6 +107,19 @@ class Parser:
 
 				self.next(3)
 				return node
+
+			elif tp == "let":
+				# {% let <expr> = <expr> %}
+
+				if "=" not in args:
+					raise ParseException("no '=' in {% let <expr> = <expr> %}")
+
+				var, *sep, expr = args.split("=")
+
+				if sep:
+					raise ParseException("too many '=' in {% let <expr> = <expr> %}")
+
+				return render.LetNode(var.strip(), expr.strip())
 		# text
 		else:
 			text = self.peek()

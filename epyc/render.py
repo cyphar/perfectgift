@@ -79,6 +79,21 @@ class ForNode(Node):
 		return ret
 
 
+class LetNode(Node):
+	def __init__(self, identifier, expression):
+		self.identifier = identifier
+		self.expression = expression
+
+	def render(self, scope={}, path="."):
+		code = "%s = %s" % (self.identifier, self.expression)
+
+		try:
+			exec(code, {}, scope)
+		except:
+			pass
+
+		return None
+
 class ExprNode(Node):
 	def __init__(self, content):
 		self.content = content
