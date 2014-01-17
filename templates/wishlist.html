@@ -100,20 +100,28 @@
     	{% include footer.html %}
     </body>
     <script>
-        var bricks = $("#product-list").masonry({
+        var brickdata = {
             "gutter": 10,
             "itemSelector": ".item",
             "isFitWidth": true
-        });
+        };
+
+        var bricks = $("#product-list").masonry(brickdata);
 
         $('.item .delete').click(function (event) {
-			var button = $(this);
+            var button = $(this);
             var id = button.data('id');
 
-            $.ajax("/users/{{username}}/item/" + id, {type:"delete"}).success(function() {
-                $(button).parent().parent().remove();
-                bricks.masonry();
-            })
+            $.ajax({
+                type: "DELETE",
+                url: "/users/{{username}}/item/" + id,
+                success: (function() {
+                    var item = $(button).parent().parent();
+                    bricks.masonry("remove", $(item));
+                    bricks.masonry();
+                })
+            });
+
         });
 
         $('#profile-img').click(function (event) {
