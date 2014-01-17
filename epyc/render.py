@@ -69,8 +69,8 @@ class ForNode(Node):
 
 		for item in L:
 			try:
-				getnext = "%s = %r" % (self.identifier, item)
-				exec(getnext, {}, scope)
+				getnext = "%s = __item__" % self.identifier
+				exec(getnext, {"__item__": item}, scope)
 			except:
 				return None
 

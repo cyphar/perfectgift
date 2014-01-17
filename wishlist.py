@@ -58,7 +58,7 @@ def index(response, username):
 			"is_current_users_wishlist_page": is_current_users_wishlist_page(response, username),
 			'response': response,'error':error_message,
 			'profile_image_filename': current_user.get_profile_image()
-			}
+	}
 
 	if logged_in:
 		logged_in_user = User.find_user(logged_in)

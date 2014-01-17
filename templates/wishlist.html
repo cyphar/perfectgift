@@ -63,8 +63,6 @@
 			  <button type="submit">Add Item</button>
 			</fieldset>
 		  </form>
-		{% else %}
-
 		{% end if %}
 		  <section id="product-list" class="clearfix">
 		  {% if products %}
@@ -73,10 +71,10 @@
 				<figure>
 				<img class="product-img" src="{{ product.image }}" />
 				<div class="item-title">
-				{% if product.link != '' and product.link != 'http://' %}
+				{% if product.link and product.link != 'http://' %}
 				  <a href="{{ product.link }}" ><img class="item-link-out" src="/static/images/arrow.png" alt="Link Out" title="Link Out"/></a>
 				{% end if %}
-				{% if product.checked == 1 %}
+				{% if product.checked %}
 				  <figcaption><strike>{{ product.name }}</strike></figcaption>
 				{% else %}
 				  <figcaption>{{ product.name }}</figcaption>
