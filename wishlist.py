@@ -119,9 +119,10 @@ def edit_item(response, username, item_id):
 		product.link = response.get_field('website')
 		if product.link[0:7] != "http://":
 			product.link = "http://" + product.link
-		#product.image = response.get_field('image')
+		product.image = response.get_field('image')
 		product.update_product()
 		response.redirect("/users/"+username)
+		return
 
 	user_lists = current_user.get_user_wish_lists()
 	if not user_lists:
@@ -131,12 +132,13 @@ def edit_item(response, username, item_id):
 	# TODO: user_lists index should be dynamicvalue
 	current_wishlist = user_lists[0]
 	scope = {"username":username,
-	"listname": current_wishlist.list_name,
-	"logged_in": current_user,
-	"current_user_fullname": display_name(current_user),
-	"is_current_users_wishlist_page": is_current_users_wishlist_page(response, username),
-	"product": Product.find_product(item_id)
+            "listname": current_wishlist.list_name,
+            "logged_in": current_user,
+            "current_user_fullname": display_name(current_user),
+            "is_current_users_wishlist_page": is_current_users_wishlist_page(response, username),
+            "product": Product.find_product(item_id)
 	}
+	print(scope["product"].image)
 	response.write(epyc.render("templates/edit.html", scope))
 
 @logged_in

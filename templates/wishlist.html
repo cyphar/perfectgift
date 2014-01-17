@@ -43,7 +43,7 @@
 			</section>
 
 		{% if logged_in and is_current_users_wishlist_page %}
-		  <form id="add-wish" method="POST" action="/users/{{username}}/item">
+		  <form id="wish-form" method="POST" action="/users/{{username}}/item">
 			<legend>Add New Wish</legend>
 			<fieldset>
 			  <span id="form-box1"><label>Wish Name:</label> <input placeholder="e.g. A Puppy (required)" type="text" name="wish" />
@@ -53,13 +53,13 @@
 			  <span id="form-box2">
 			  <label>Description:</label> <textarea type="text" name="description" placeholder="e.g. I want a puppy." rows="3"></textarea></span>
 			  <div id="imagesDiv" style="display:none"> Choose an image:
-				<span id="add-prod-select">
+				<span id="prod-select">
 				  {% for i in range(5) %}
 				  <img class="image-select prod-image" id="add-prod-img"/>
 				  {% end for %}
 				</span>
 			  </div>
-			  <input type="hidden" id="hidden-add-img" name="image" value="" />
+			  <input type="hidden" id="hidden-img" name="image" value="" />
 			  <button type="submit">Add Item</button>
 			</fieldset>
 		  </form>
@@ -128,13 +128,13 @@
 			$('#upload-profile-image').toggle();
 		});
 
-		$("#add-prod-select img").click(function (thing) {
-			$("#add-prod-select img").each(function (index) {
+		$("#prod-select img").click(function (thing) {
+			$("#prod-select img").each(function (index) {
 				$(this).removeClass("selected");
 			});
 
 			$(this).addClass("selected");
-			$("#hidden-add-img").val($(this).attr("src"));
+			$("#hidden-img").val($(this).attr("src"));
 		});
 
 		var upd = null;
@@ -155,12 +155,12 @@
 					var img = data['images'];
 
 					/* reset all of them */
-					$("#add-prod-select img").each(function (index) {
+					$("#prod-select img").each(function (index) {
 						$(this).attr("src", "");
 					});
 
 					if(img) {
-						$("#add-prod-select img").each(function (index) {
+						$("#prod-select img").each(function (index) {
 							if(index > img.length)
 								return;
 
@@ -169,14 +169,14 @@
 					}
 
 					/* Update selection */
-					var selected = $("#add-prod-select").find(".selected").first();
-					$("#hidden-add-img").val($(selected).attr("src"));
+					var selected = $("#prod-select").find(".selected").first();
+					$("#hidden-img").val($(selected).attr("src"));
 					upd = null;
 				})
 			});
 		});
 
-		$('#add-wish').submit(function (event) {
+		$('#wish-form').submit(function (event) {
 			if(upd)
 				upd.abort();
 		});
