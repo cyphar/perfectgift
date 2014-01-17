@@ -137,9 +137,15 @@
 			$("#hidden-add-img").val($(this).attr("src"));
 		});
 
+		var upd = null;
+
 		$('#website').change(function (event) {
 			var url = $("#website").val();
-			var upd = $.ajax({
+
+			if(upd)
+				upd.abort();
+
+			upd = $.ajax({
 				dataType: "json",
 				type: "POST",
 				url: "/ajax/scrape",
@@ -165,8 +171,14 @@
 					/* Update selection */
 					var selected = $("#add-prod-select").find(".selected").first();
 					$("#hidden-add-img").val($(selected).attr("src"));
+					upd = null;
 				})
 			});
+		});
+
+		$('#add-wish').submit(function (event) {
+			if(upd)
+				upd.abort();
 		});
 	 </script>
 </html>
