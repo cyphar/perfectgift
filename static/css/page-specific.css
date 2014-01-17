@@ -196,18 +196,18 @@ hr {
 	text-decoration: none;
 }
 
-#add-wish {
+#wish-form {
 	width: 940px;
 	position: relative;
 }
 
-#add-wish p {
+#wish-form p {
 	vertical-align: top;
 	margin: 10px 1% 0;
 	text-align: right;
 }
 
-#add-wish span {
+#wish-form span {
 	display: inline-block;
 
 }
@@ -222,20 +222,20 @@ hr {
 #form-box2 > label { padding-left: 40px; }
 #form-box1 #website, #form-box1 #website-label { bottom: 8px; position: relative; }
 
-#add-wish label {
+#wish-form label {
 	text-align: right;
 	vertical-align: top;
 }
 
-#add-wish button[type=submit] {
+#wish-form button[type=submit] {
 	position: relative;
 	left: 90%;
 	margin: 0;
 	vertical-align: top;
 }
 
-#add-wish input[type=text],
-#add-wish textarea {
+#wish-form input[type=text],
+#wish-form textarea {
 	width: 70%;
 }
 
