@@ -68,11 +68,31 @@ class ForNode(Node):
 			return None
 
 		for item in L:
-			scope[self.identifier] = item
+			try:
+				getnext = "%s = %r" % (self.identifier, item)
+				exec(getnext, {}, scope)
+			except:
+				return None
+
 			ret += self.block.render(scope, path) or ''
 
 		return ret
 
+
+class LetNode(Node):
+	def __init__(self, identifier, expression):
+		self.identifier = identifier
+		self.expression = expression
+
+	def render(self, scope={}, path="."):
+		code = "%s = %s" % (self.identifier, self.expression)
+
+		try:
+			exec(code, {}, scope)
+		except:
+			pass
+
+		return None
 
 class ExprNode(Node):
 	def __init__(self, content):
