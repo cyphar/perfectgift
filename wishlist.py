@@ -16,7 +16,7 @@ from friends import search, friends_list
 def format_price(price):
     if re.match(r'^\$?\d{1,3}(,?\d{3})*(\.[0-9]+)?$', price):
         price = price.replace('$', '').replace(',', '')
-        return "${0:,.2f}".format(float(price)))
+        return "${0:,.2f}".format(float(price))
     return str(price)
 
 def display_name(user):
