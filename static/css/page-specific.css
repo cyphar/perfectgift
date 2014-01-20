@@ -125,16 +125,11 @@ h1-error {
 		padding-top: 16px;
 	}
 
-#create-form label, #create-form input, #create-form button,
-#login-form label, #login-form input, #login-form button {
-	margin-top: 10px;
-}
-
 #login-form {
 	position: relative;
 	top: 50%;
 }
-#login-form p {
+#login-form fieldset {
 	margin: 73px 0;
 }
 
