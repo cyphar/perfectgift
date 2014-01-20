@@ -125,8 +125,6 @@ def edit_item(response, username, item_id):
 		product.name = response.get_field('wish')
 		product.description = response.get_field('description')
 		product.link = response.get_field('website')
-		if product.link[0:7] != "http://":
-			product.link = "http://" + product.link
 		product.image = response.get_field('image')
 		product.update_product()
 		response.redirect("/users/"+username)

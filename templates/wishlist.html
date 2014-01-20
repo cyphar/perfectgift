@@ -73,7 +73,7 @@
 				<figure>
 				<img class="product-img" src="{{ product.image }}" />
 				<div class="item-title">
-				{% if product.link and product.link != 'http://' %}
+				{% if product.link %}
 					<a href="{{ product.link }}" ><img class="item-link-out" src="/static/images/arrow.png" alt="Link Out" title="Link Out"/></a>
 				{% end if %}
 				{% if product.checked %}
