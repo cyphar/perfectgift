@@ -200,7 +200,7 @@ hr {
 
 #wish-form p {
 	vertical-align: top;
-	margin: 10px 1% 0;
+	margin: 0 0 10px;
 	text-align: right;
 }
 
@@ -215,9 +215,11 @@ hr {
 }
 
 #form-box1 { width: 45%; }
-#form-box2 { width: 54%; }
+#form-box2 {
+	width: 54%;
+	float: right;
+}
 #form-box2 > label { padding-left: 40px; }
-#form-box1 #website, #form-box1 #website-label { bottom: 8px; position: relative; }
 
 #wish-form label {
 	text-align: right;
