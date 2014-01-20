@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
-		<head>
+	<head>
 		{% include head.html %}
-	  <title>Wishlist: {{ listname }}</title>
+		<title>Wishlist: {{ listname }}</title>
 	</head>
 	<body class="small-header photo1">
 
@@ -35,64 +35,66 @@
 					</figcaption>
 				</figure>
 				{% if logged_in and is_current_users_wishlist_page %}
-			<form id="upload-profile-image" method="POST" action="/users/{{ username }}/edit" enctype="multipart/form-data">
-						<input type="file" name="profile-photo">
-						<button type="submit">Change Profile Picture</button>
-					</form>
-					{% end if %}
+				<form id="upload-profile-image" method="POST" action="/users/{{ username }}/edit" enctype="multipart/form-data">
+					<input type="file" name="profile-photo">
+					<button type="submit">Change Profile Picture</button>
+				</form>
+				{% end if %}
 			</section>
 
 		{% if logged_in and is_current_users_wishlist_page %}
-		  <form id="wish-form" method="POST" action="/users/{{username}}/item">
+			<form id="wish-form" method="POST" action="/users/{{username}}/item">
 			<legend>Add New Wish</legend>
 			<fieldset>
-			  <span id="form-box1"><label>Wish Name:</label> <input placeholder="e.g. A Puppy (required)" type="text" name="wish" />
-				<label>Price:</label> <input type="text" name="price" placeholder="Estimate (e.g. Free-$80)" />
-				<br /><br /><br />
-				<label id="website-label">URL:</label> <input type="text" id="website" name="website" placeholder="e.g. www.example.com" /></span>
-			  <span id="form-box2">
-			  <label>Description:</label> <textarea type="text" name="description" placeholder="e.g. I want a puppy." rows="3"></textarea></span>
-			  <div id="imagesDiv" style="display:none"> Choose an image:
-				<span id="prod-select">
-				  {% for i in range(5) %}
-				  <img class="image-select prod-image" id="add-prod-img"/>
-				  {% end for %}
+				<span id="form-box1">
+					<p><label>Wish Name:</label> <input placeholder="e.g. A Puppy (required)" type="text" name="wish" /></p>
+					<p><label>Price:</label> <input type="text" name="price" placeholder="Estimate (e.g. Free-$80)" /></p>
+					<p><label id="website-label">URL:</label> <input type="text" id="website" name="website" placeholder="e.g. www.example.com" /></p>
 				</span>
-			  </div>
-			  <input type="hidden" id="hidden-img" name="image" value="" />
-			  <button type="submit">Add Item</button>
+				<span id="form-box2">
+					<label>Description:</label> <textarea type="text" name="description" placeholder="e.g. I want a puppy." rows="3"></textarea>
+				</span>
+				<div id="imagesDiv" style="display:none"> Choose an image:
+				<span id="prod-select">
+					{% for i in range(5) %}
+					<img class="image-select prod-image" id="add-prod-img"/>
+					{% end for %}
+				</span>
+				</div>
+				<input type="hidden" id="hidden-img" name="image" value="" />
+				<button type="submit">Add Item</button>
 			</fieldset>
-		  </form>
+			</form>
 		{% end if %}
-		  <section id="product-list" class="clearfix">
-		  {% if products %}
+			<section id="product-list" class="clearfix">
+			{% if products %}
 			{% for product in products %}
-			  <div class="item">
+				<div class="item">
 				<figure>
 				<img class="product-img" src="{{ product.image }}" />
 				<div class="item-title">
 				{% if product.link and product.link != 'http://' %}
-				  <a href="{{ product.link }}" ><img class="item-link-out" src="/static/images/arrow.png" alt="Link Out" title="Link Out"/></a>
+					<a href="{{ product.link }}" ><img class="item-link-out" src="/static/images/arrow.png" alt="Link Out" title="Link Out"/></a>
 				{% end if %}
 				{% if product.checked %}
-				  <figcaption><strike>{{ product.name }}</strike></figcaption>
+					<figcaption><strike>{{ product.name }}</strike></figcaption>
 				{% else %}
-				  <figcaption>{{ product.name }}</figcaption>
+					<figcaption>{{ product.name }}</figcaption>
 				{% end if %}
-			  </div>
+				</div>
 			<p class="product-item-price">{{ product.price }}</p>
 			<p class="product-item-descript">{{ product.description }}</p>
 			{% if is_current_users_wishlist_page %}
 					<button data-id="{{ product.product_id }}" class="delete"><img src="/static/images/trash.png" alt="Delete"></button>
-				 	<button onclick="location.href='/users/{{username}}/edit_item/{{ product.product_id }}'" class="edit"><img src="/static/images/pencil.png" alt="Edit"></button>
-			   	{% end if %}
-			   </figure>
+					<button onclick="location.href='/users/{{username}}/edit_item/{{ product.product_id }}'" class="edit"><img src="/static/images/pencil.png" alt="Edit"></button>
+					{% end if %}
+				 </figure>
 			 </div>
-		   {% end for %}
-		   {% else %}
+			 {% end for %}
+			 {% else %}
 			<!--<h1>This user does not have any items in their wishlist</h1>-->
-		   {% end if%}
-		  </section>
+			 {% end if%}
+			</section>
 		</article>
 
 		{% include footer.html %}
@@ -180,4 +182,3 @@
 		});
 	 </script>
 </html>
-
