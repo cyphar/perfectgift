@@ -57,9 +57,11 @@ def login(response):
 	# already logged in!
 	if userid:
 		response.redirect('/users/'+ userid.decode('utf-8'))
+		return
 
 	elif uid is None or pwd is None:
 		response.write(epyc.render("templates/login.html",{"logged_in":get_current_user(response)}))
+		return
 
 	errors = []
 
