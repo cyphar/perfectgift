@@ -8,8 +8,10 @@ import re
 import argparse
 
 from tornado.ncss import Server
+
 from login import *
-from db import User, Wishlist, Product, UserNotFound
+from db.api import User, Wishlist, Product, UserNotFound
+
 from urllib.parse import urlencode
 from scrape import scrape
 from friends import search, friends_list

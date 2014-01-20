@@ -1,8 +1,9 @@
-from tornado.ncss import Server
-from password import passCheck, hashPw, saltGen
 import epyc
-from db import User, UserNotFound
 import re
+
+from tornado.ncss import Server
+from db.password import passCheck, hashPw, saltGen
+from db.api import User, UserNotFound
 
 # decorator function for checking that the user is logged in
 def logged_in(fn):

@@ -1,5 +1,5 @@
 import sqlite3
-from password import hashPw, saltGen
+from db.password import hashPw, saltGen
 
 class UserNotFound(Exception):
 	pass
@@ -8,9 +8,9 @@ class ProductNotFound(Exception):
 	pass
 
 class FriendAlreadyAdded(Exception):
-	pass  
+	pass
 
-_conn = sqlite3.connect("wishlist.db") 
+_conn = sqlite3.connect("wishlist.db")
 
 class User:
 	def __init__(self, user_id, fname, lname, username, email, dob=None):
@@ -29,17 +29,17 @@ class User:
 		row = cur.fetchone()
 		if row is None:
 			raise UserNotFound('{} does not exist'.format(username))
-		
+
 		####dob
 		return User(row[0], row[1], row[2], row[3], row[4], row[5])
-		
+
 	@classmethod
 	def find_user_with_user_id(cls, user_id):
 		cur = _conn.execute('''SELECT * FROM tbl_users WHERE user_id = ?''', (user_id,))
 		row = cur.fetchone()
 		if row is None:
 			raise UserNotFound('{} does not exist'.format(user_id))
-		
+
 		####dob
 		return User(row[0], row[1], row[2], row[3], row[4], row[5])
 
@@ -55,7 +55,7 @@ class User:
 			return False
 		except UserNotFound:
 			return False
-		
+
 
 	@classmethod
 	def create_user(cls, fname, lname, username, email, password, dob=None):
@@ -72,11 +72,11 @@ class User:
 	def delete_user(cls, username):
 		cur = _conn.execute('''DELETE FROM t bl_users WHERE username = ?''', (username,))
 		_conn.commit()
-	
+
 	def get_user_wish_lists(self):
 		cur = _conn.execute('''SELECT * FROM tbl_wish_list WHERE user_id = ?''', (self.user_id,))
 		rows = cur.fetchall()
-		
+
 		wishlists = []
 		for i in rows:
 			wishlist = Wishlist(i[0], i[1], i[2])
@@ -93,28 +93,28 @@ class User:
 	def delete_wish_list (self, list_name):
 		cur = _conn.execute('''DELETE FROM tbl_wish_list WHERE list_name = ? AND user_id = ?''', (list_name, self.user_id))
 		_conn.commit()
-	
-	
+
+
 	def delete_friend(self,  friend_id):
-		cur = _conn.execute('''DELETE FROM tbl_friends 
+		cur = _conn.execute('''DELETE FROM tbl_friends
 			WHERE f_user_id =? AND friend_id =?''', (self.user_id, friend_id))
 		_conn.commit()
-	
+
 	def add_friend(self, friend_id):
 		if(self.check_friend(friend_id) == False):
 			cur = _conn.execute('''INSERT INTO tbl_friends VALUES (?,?)''', (self.user_id, friend_id))
 			_conn.commit()
 		else:
 			raise FriendAlreadyAdded('Friend_id:.{} has already been added!'.format(friend_id))
-		
+
 	def check_friend(self, friend_id):
 		cur = _conn.execute('''SELECT * FROM tbl_friends WHERE (f_user_id =? AND friend_id =?) OR (f_user_id =? AND friend_id =?) LIMIT 2''', (self.user_id, friend_id, friend_id, self.user_id))
 		return len(cur.fetchall()) == 2 #if found exactly 2 rows
-			
+
 	def check_pending_friend(self, friend_id):
 		cur = _conn.execute('''SELECT 1 FROM tbl_friends WHERE (f_user_id =? AND friend_id =?)''', (self.user_id, friend_id))
 		return len(cur.fetchall()) > 0 #true if any rows returned
-		
+
 	def find_friends(self):
 		cur = _conn.execute('''
 			SELECT f_user_id FROM tbl_friends WHERE friend_id = ? INTERSECT
@@ -135,12 +135,12 @@ class User:
 				# file isn't there under this extension, use the default later
 				pass
 		return '/static/images/profile-silhouette.gif'
-		
-	
-		
+
+
+
 
 #	def edit_wish_list_name (self, list_name): add this in later version
-		
+
 
 
 
@@ -156,7 +156,7 @@ class Product:
 		self.price = price
 		self.checked = checked
 
-	
+
 	@classmethod
 	def find_product(cls, product_id):
 		cur = _conn.execute('''SELECT * FROM tbl_products
@@ -174,12 +174,12 @@ class Product:
 		_conn.commit()
 		cur = _conn.execute("SELECT last_insert_rowid()")
 		return Product(cur.fetchone()[0], image, link, name, description, price)
-		
+
 	def update_product(self):
-		cur = _conn.execute('''UPDATE tbl_products SET image=?, link=?, name=?, description=?, price=? WHERE product_id=?''', (self.image, self.link, self.name, self.description, self.price, self.product_id)) 
+		cur = _conn.execute('''UPDATE tbl_products SET image=?, link=?, name=?, description=?, price=? WHERE product_id=?''', (self.image, self.link, self.name, self.description, self.price, self.product_id))
 		_conn.commit()
-	
-		
+
+
 class Wishlist:
 	def __init__(self, wish_id, list_name, user_id):
 		self.wish_id = wish_id
@@ -189,7 +189,7 @@ class Wishlist:
 	def add_list_item (self, product_id):
 		cur = _conn.execute('''INSERT INTO tbl_list_item (product_id, list_id, checked) VALUES(?, ?, 0)''', (product_id, self.wish_id))
 		_conn.commit()
-		
+
 
 	def get_wish_list_products(self):
 		cur = _conn.execute('''SELECT tbl_products.product_id, image, link, name, description, price, tbl_list_item.checked
@@ -210,7 +210,7 @@ class Wishlist:
 		cur = _conn.execute('''DELETE FROM tbl_list_item WHERE list_id=? AND product_id=?''', (self.wish_id, product_id))
 		_conn.commit()
 
-		
+
 
 
 ####USERS####
@@ -219,7 +219,7 @@ class Wishlist:
 #uf = User.find_user("matN")
 #u = User.find_user("bazS")
 #print(u.find_friends())
- 
+
 #get the user's wishlist
 
 
@@ -256,7 +256,7 @@ class Wishlist:
 #gets all products for a specific wishlist
 #print(w.get_wish_list_products()[0].name)
 
-	
+
 ####LIST ITEM####
 #Add a list item
 #w.add_list_item(1)
@@ -264,8 +264,3 @@ class Wishlist:
 
 #get all products of a specific list
 #print(w.get_wish_list_products())
-
-
-
-
-	

@@ -1,11 +1,14 @@
-from tornado.ncss import Server
-from db import User, UserNotFound
-from login import  logged_in, get_current_user
 import epyc
 import sqlite3
 import locale
-conn=sqlite3.connect("wishlist.db")
-locale.setlocale( locale.LC_ALL, '' )
+
+from tornado.ncss import Server
+from db.api import User, UserNotFound
+from login import  logged_in, get_current_user
+
+conn = sqlite3.connect("wishlist.db")
+locale.setlocale(locale.LC_ALL, '')
+
 @logged_in
 def friends_list(response):
 
@@ -55,7 +58,7 @@ def search(response):
 			print(row2)
 			response.write(epyc.render("templates/search.html", {"query": search,
 			"no_results": True, 'results_items': row2, "people_checked": "", "items_checked":"checked","logged_in": get_current_user(response)}))
-	
+
 	else:
 		print(search)
 		people_or_item = response.get_field("searchr")
@@ -65,7 +68,7 @@ def search(response):
 			response.write(epyc.render("templates/search.html", {"query": "","no_results": False, "results":None, "people_checked": "", "items_checked":"checked", "logged_in": get_current_user(response)}))
 		else:
 			response.write(epyc.render("templates/search.html", {"query": "","no_results": False, "results":None, "people_checked": "checked", "items_checked":"", "logged_in": get_current_user(response)}))
-		
+
 
 def hello(response, match):
 	response.write(epyc._render('''
