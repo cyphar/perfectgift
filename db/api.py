@@ -168,8 +168,6 @@ class Product:
 
 	@classmethod
 	def create_product(cls, image, link, name, description, price):
-		if link[0:7] != "http://":
-			link = "http://" + link
 		cur = _conn.execute('''INSERT INTO tbl_products (image,link,name,description,price) VALUES (?, ?, ?, ?, ?)''', (image, link, name, description, price))
 		_conn.commit()
 		cur = _conn.execute("SELECT last_insert_rowid()")
