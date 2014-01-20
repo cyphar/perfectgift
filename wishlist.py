@@ -13,7 +13,8 @@ from login import *
 from db.api import User, Wishlist, Product, UserNotFound
 
 from urllib.parse import urlencode
-from scrape import scrape
+from ajax import scrape
+
 from friends import search, friends_list
 
 def format_price(price):
@@ -54,15 +55,16 @@ def index(response, username):
 	if error_code == '0':
 		errors.append("Wish name cannot be empty")
 
-	scope = {"username":username,
-			"products": products,
-			"listname": current_wishlist.list_name,
-			"logged_in": logged_in,
-			"current_user_fullname": display_name(current_user),
-			"is_current_users_wishlist_page": is_current_users_wishlist_page(response, username),
-			'response': response,
-			'errors': errors,
-			'profile_image_filename': current_user.get_profile_image()
+	scope = {
+		"username":username,
+		"products": products,
+		"listname": current_wishlist.list_name,
+		"logged_in": logged_in,
+		"current_user_fullname": display_name(current_user),
+		"is_current_users_wishlist_page": is_current_users_wishlist_page(response, username),
+		'response': response,
+		'errors': errors,
+		'profile_image_filename': '/static/images/profiles/%s' % current_user.image
 	}
 
 	if logged_in:
@@ -154,14 +156,21 @@ def edit_user(response, username):
 		handle_error(response, message="user")
 		return
 	# supports image only for now, extend later for profile data changes
+
 	filename, content_type, photo = response.get_file('profile-photo')
 	accepted_image_formats = ['jpg', 'jpeg', 'JPEG', 'png', 'PNG', 'gif', 'GIF']
-	for image_format in accepted_image_formats:
-		if filename.endswith(image_format):
-			with open('static/images/profiles/' + str(current_user.user_id) + '.' + \
-				image_format, mode='wb') as f:
-				f.write(photo)
-				time.sleep(1) # sleep briefly to ensure file is saved correctly on server
+
+	extension = filename.split('.')[-1]
+	if extension in accepted_image_formats:
+		img = "{}.{}".format(current_user.user_id, extension)
+		profile_img = 'static/images/profiles/' + img
+
+		current_user.image = img
+		current_user.save()
+
+		with open(profile_img, mode='wb') as f:
+			f.write(photo)
+			time.sleep(1) # sleep briefly to ensure file is saved correctly on server
 
 	response.redirect('/users/' + username)
 
@@ -212,17 +221,8 @@ def feed(response):
 		"dob":"31st August"
 		}))
 
-def scrape_url(response):
-	url = response.get_field("scrape_url")
-
-	if not url:
-		return response.write(json.dumps({"error": "404"}))
-
-	images = scrape(url)
-	return response.write(json.dumps({"images": images}))
-
-def run_server(serverport):
-	server = Server(write_error=handle_error, port=serverport)
+def run_server(srvhost='', serverport=8888):
+	server = Server(write_error=handle_error, hostname=srvhost, port=serverport)
 
 	server.register('/users/([a-zA-Z0-9_]+)', index) #view users profile
 	server.register('/users/([a-zA-Z0-9_]+)/item', add_item) #add item
@@ -232,14 +232,14 @@ def run_server(serverport):
 	server.register('/friends', friends_list)
 	server.register('/add_friend/([a-zA-Z0-9_]+)', add_friend)
 	server.register('/delete_friend/([a-zA-Z0-9_]+)', delete_friend)
-	server.register('/login',login)
-	server.register('/logout',logout)
-	server.register('/signup',signup)
-	server.register('/ajax/scrape', scrape_url)
-	server.register('/',home)
+	server.register('/login', login)
+	server.register('/logout', logout)
+	server.register('/signup', signup)
+	server.register('/ajax/scrape', scrape.scrape_url)
+	server.register('/', home)
 	server.register('/mywishlist', myWishlist)
 	server.register('/feed', feed)
-	server.register('/search',search)
+	server.register('/search', search)
 	server.register('.*', handle_error)
 
 	server.run()
@@ -247,6 +247,7 @@ def run_server(serverport):
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser(description="Start a tornado server, running the 'perfectgift.com' website.")
 	parser.add_argument('-p', '--port', type=int, default=8888)
+	parser.add_argument('-H', '--host', type=str, default='')
 	args = parser.parse_args()
 
-	run_server(args.port)
+	run_server(args.host, args.port)

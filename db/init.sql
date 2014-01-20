@@ -7,6 +7,7 @@ CREATE TABLE tbl_users (
 	lname TEXT NOT NULL,
 	username TEXT NOT NULL UNIQUE,
 	email TEXT NOT NULL UNIQUE,
+	image TEXT NOT NULL,
 	password TEXT NOT NULL,
 	salt TEXT NOT NULL,
 	dob TEXT,

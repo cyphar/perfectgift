@@ -13,15 +13,15 @@ class FriendAlreadyAdded(Exception):
 _conn = sqlite3.connect("wishlist.db")
 
 class User:
-	def __init__(self, user_id, fname, lname, username, email, dob=None):
+	def __init__(self, user_id, fname, lname, username, email, image=None, dob=None):
 		self.user_id = user_id
 		self.fname = fname
 		self.lname = lname
 		self.username = username
 		self.email = email
-		if dob == "":
-			dob = None
-		self.dob = dob #optional ####dob
+
+		self.image = image or 'default.gif'
+		self.dob = dob or None
 
 	@classmethod
 	def find_user(cls, username):
@@ -58,19 +58,26 @@ class User:
 
 
 	@classmethod
-	def create_user(cls, fname, lname, username, email, password, dob=None):
+	def create_user(cls, fname, lname, username, email, password, image=None, dob=None):
 		result = hashPw(password, saltGen())
-		if dob == "":
-			dob = None
+
+		dob = dob or None
+		image = image or 'default.gif'
+
 		#####dob
-		cur = _conn.execute('''INSERT INTO tbl_users (fname, lname, username, email, password, salt, dob) VALUES ( ?, ?, ?, ?, ?, ?, date(?))''', (fname, lname, username, email, result[0], result[1], dob))
+		cur = _conn.execute('''INSERT INTO tbl_users (fname, lname, username, email, image, password, salt, dob) VALUES (?, ?, ?, ?, ?, ?, ?, date(?))''', (fname, lname, username, email, image, result[0], result[1], dob))
 		_conn.commit()
 		cur = _conn.execute('''SELECT last_insert_rowid()''')
-		return User(cur.fetchone()[0], fname, lname, username, email, dob)
+		return User(cur.fetchone()[0], fname, lname, username, email, image, dob)
 
 	@classmethod
 	def delete_user(cls, username):
 		cur = _conn.execute('''DELETE FROM t bl_users WHERE username = ?''', (username,))
+		_conn.commit()
+
+	def save(self):
+		_conn.execute('''UPDATE tbl_users SET fname = ?, lname = ?, username = ?, email = ?, image = ?, dob = ? WHERE user_id = ?''',
+					(self.fname, self.lname, self.username, self.email, self.image, self.dob, self.user_id))
 		_conn.commit()
 
 	def get_user_wish_lists(self):
@@ -123,25 +130,7 @@ class User:
 		rows = cur.fetchall()
 		return [i[0] for i in rows]
 
-	def get_profile_image(self):
-		accepted_image_formats = ['jpg', 'jpeg', 'JPEG', 'png', 'PNG', 'gif', 'GIF']
-		string_user_id = str(self.user_id)
-		filename = ''
-		for image_format in accepted_image_formats:
-			try:
-				with open('static/images/profiles/' + string_user_id + '.' + image_format):
-					return '/static/images/profiles/' + string_user_id + '.' + image_format
-			except IOError:
-				# file isn't there under this extension, use the default later
-				pass
-		return '/static/images/profile-silhouette.gif'
-
-
-
-
 #	def edit_wish_list_name (self, list_name): add this in later version
-
-
 
 
 # TODO make get_wish_list for the second iteration so friends can find friend's lists

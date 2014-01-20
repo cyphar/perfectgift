@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 
-import urllib.request
-import urllib.parse
 import io
 import re
+import json
+
+import urllib.request
+import urllib.parse
 
 from html.parser import HTMLParser
 from PIL import Image
@@ -87,6 +89,17 @@ def scrape(url, proxy={}):
 		return get_images(url, proxy)
 	except:
 		return None
+
+# Scrape urls for tornado.
+def scrape_url(response):
+	"Wrap scrape() for tornado usage."
+	url = response.get_field("scrape_url")
+
+	if not url:
+		return response.write(json.dumps({"error": "404"}))
+
+	images = scrape(url)
+	return response.write(json.dumps({"images": images}))
 
 if __name__ == "__main__":
 	for web in iter(input, ""):

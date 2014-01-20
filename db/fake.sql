@@ -1,16 +1,16 @@
 -- Fake data for the wishlist database
 -- NOTE: USED FOR TESTING.
 
-INSERT INTO tbl_users VALUES (0, 'Barry', 'Schultz', 'bazS', 'bazS@here.now', '3a3b2372dd1f0c0f5e8bdd3196bb29dbcbd7f75a55abb9ba9ab2f60243bcd517', "x_HCV[`/", "1997-09-01");
-INSERT INTO tbl_users VALUES (1, 'Prue', 'Robinson', 'pruR', 'pruR@here.now', 'f19ac3fa320b096735b4f734aba6550734213a35c28bdcec4eed5a78157daf14', "y{DZp?uc", "1997-09-01" );
-INSERT INTO tbl_users VALUES (2, 'Andrew', 'Varvel', 'andV', 'andV@here.now', 'e5aabf82efd3ea15d803e2190a18e3131b22c2f013dcf8a9d600b5f06cd0242d', "(cFg^KtE", "1997-09-01");
-INSERT INTO tbl_users VALUES (3, 'Mathew', 'Nemes', 'matN', 'matN@here.now', '05acaabdba3907e829b330f81c8b3deace38ccbefa1ef795534107d15eee95e1', "i]xs@K\\W", "1997-09-01");
-INSERT INTO tbl_users VALUES (4, 'Mara', 'Barber', 'marB', 'marB@here.now', '307f8f39111c1988983953b24a343e91222df1edccfd95e809b31268cf1f54a4', "VoAqaR1i", "1997-09-01");
-INSERT INTO tbl_users VALUES (5, 'Scott', 'Herdman', 'scoH', 'scoH@here.now', '0f6d189941215610b505b9354d47ae33431e00546ba9f4afc92b39f9c381e4fc', "E-G,M%UZ", "1997-09-01");
-INSERT INTO tbl_users VALUES (6, 'Alec', 'Newton', 'aleN', 'aleN@here.now', '8f71b161b562d7c0d3b01babcd454cbd4b9319b8b92a1d555dde614a79a29e23', "SVe>88P.", "1997-09-01");
-INSERT INTO tbl_users VALUES (7, 'Karen', 'Barber', 'karB', 'karB@here.now', '052b43fd7391614896cb2cf37eae4a0fb514a25b55731809a169fd0e72ccb84c', ", 5&ud,[q", "1997-09-01");
-INSERT INTO tbl_users VALUES (8, 'Grant', 'Ovzinsky', 'granO', 'granO@here.now', '1c9fe0f03bfd50c9df89a42e27f7041606d8c8b49e102e645628c57ef5ea2d25', "ev\\0Qqb2", "1997-09-01");
-INSERT INTO tbl_users VALUES (9, 'Nick', 'Wright', 'admin', 'admin@group4.com', 'd86a0c720b776de00005283374c17fa3243094d2aa482db36f6311bc801e9f2f', 'z(z6|Z3Q', '1997-09-01');
+INSERT INTO tbl_users VALUES (0, 'Barry', 'Schultz', 'bazS', 'bazS@here.now', "0.jpg", '3a3b2372dd1f0c0f5e8bdd3196bb29dbcbd7f75a55abb9ba9ab2f60243bcd517', "x_HCV[`/", "1997-09-01");
+INSERT INTO tbl_users VALUES (1, 'Prue', 'Robinson', 'pruR', 'pruR@here.now', "1.jpg", 'f19ac3fa320b096735b4f734aba6550734213a35c28bdcec4eed5a78157daf14', "y{DZp?uc", "1997-09-01" );
+INSERT INTO tbl_users VALUES (2, 'Andrew', 'Varvel', 'andV', 'andV@here.now', "2.jpg", 'e5aabf82efd3ea15d803e2190a18e3131b22c2f013dcf8a9d600b5f06cd0242d', "(cFg^KtE", "1997-09-01");
+INSERT INTO tbl_users VALUES (3, 'Mathew', 'Nemes', 'matN', 'matN@here.now', "3.jpg", '05acaabdba3907e829b330f81c8b3deace38ccbefa1ef795534107d15eee95e1', "i]xs@K\\W", "1997-09-01");
+INSERT INTO tbl_users VALUES (4, 'Mara', 'Barber', 'marB', 'marB@here.now', "4.jpg", '307f8f39111c1988983953b24a343e91222df1edccfd95e809b31268cf1f54a4', "VoAqaR1i", "1997-09-01");
+INSERT INTO tbl_users VALUES (5, 'Scott', 'Herdman', 'scoH', 'scoH@here.now', "5.jpg", '0f6d189941215610b505b9354d47ae33431e00546ba9f4afc92b39f9c381e4fc', "E-G,M%UZ", "1997-09-01");
+INSERT INTO tbl_users VALUES (6, 'Alec', 'Newton', 'aleN', 'aleN@here.now', "6.jpg", '8f71b161b562d7c0d3b01babcd454cbd4b9319b8b92a1d555dde614a79a29e23', "SVe>88P.", "1997-09-01");
+INSERT INTO tbl_users VALUES (7, 'Karen', 'Barber', 'karB', 'karB@here.now', "7.jpg", '052b43fd7391614896cb2cf37eae4a0fb514a25b55731809a169fd0e72ccb84c', ", 5&ud,[q", "1997-09-01");
+INSERT INTO tbl_users VALUES (8, 'Grant', 'Ovzinsky', 'granO', 'granO@here.now', "8.jpg", '1c9fe0f03bfd50c9df89a42e27f7041606d8c8b49e102e645628c57ef5ea2d25', "ev\\0Qqb2", "1997-09-01");
+INSERT INTO tbl_users VALUES (9, 'Nick', 'Wright', 'admin', 'admin@group4.com', "9.jpg", 'd86a0c720b776de00005283374c17fa3243094d2aa482db36f6311bc801e9f2f', 'z(z6|Z3Q', '1997-09-01');
 
 INSERT INTO tbl_products VALUES (0, '/static/images/gift_box.png', 'http://www.smiley.com', 'smiley pillow', 'cutesy smiley pillow at MYER', 2014.0 );
 INSERT INTO tbl_products VALUES (1, '/static/images/gift_box.png', 'http://www.dog.com', 'dog house', 'Hand made dog house' , 1078.0);
