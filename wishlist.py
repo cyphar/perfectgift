@@ -6,6 +6,7 @@ import time
 import json
 import re
 import argparse
+import os
 
 from tornado.ncss import Server
 
@@ -164,6 +165,9 @@ def edit_user(response, username):
 	if extension in accepted_image_formats:
 		img = "{}.{}".format(current_user.user_id, extension)
 		profile_img = 'static/images/profiles/' + img
+
+		old_image = 'static/images/profiles/' + current_user.image
+		os.remove(old_image)
 
 		current_user.image = img
 		current_user.save()
