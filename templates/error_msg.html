@@ -1,5 +1,13 @@
-{% if error %}
+{% if errors %}
 	<div class="error-msg">
+	{% if len(errors) == 1 %}
 		{{ error }}
+	{% else %}
+		<ul>
+		{% for error in errors %}
+			<li>{{ error }}</li>
+		{% end for %}
+		</ul>
+	{% end if %}
 	</div>
 {% end if %}

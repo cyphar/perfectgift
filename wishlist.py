@@ -45,10 +45,12 @@ def index(response, username):
 	products = current_wishlist.get_wish_list_products()
 	for product in products:
 		product.price = format_price(str(product.price))
+
 	error_code = response.get_field('error')
-	error_message = ''
+	errors = []
+
 	if error_code == '0':
-		error_message = "Error: Wish name cannot be empty"
+		errors.append("Wish name cannot be empty")
 
 	scope = {"username":username,
 			"products": products,
@@ -56,7 +58,8 @@ def index(response, username):
 			"logged_in": logged_in,
 			"current_user_fullname": display_name(current_user),
 			"is_current_users_wishlist_page": is_current_users_wishlist_page(response, username),
-			'response': response,'error':error_message,
+			'response': response,
+			'errors': errors,
 			'profile_image_filename': current_user.get_profile_image()
 	}
 

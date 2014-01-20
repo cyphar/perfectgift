@@ -14,7 +14,7 @@ def logged_in(fn):
 		# if NOT logged in then display login page
 		return response.redirect('/login')
 	return inner
-	
+
 def get_current_user(response):
 	userid = response.get_secure_cookie('userid')
 	if userid:
@@ -22,14 +22,14 @@ def get_current_user(response):
 	else:
 		userid = False
 	return userid
-	
+
 @logged_in
 def is_current_users_wishlist_page(response, username):
 	if get_current_user(response) == username:
 		return True
 	return False
-		
-		
+
+
 #commented out as we don't want landing page to be login page
 #def home(response):
 #	if response.get_secure_cookie('userid') is None:
@@ -49,26 +49,32 @@ def hello(response):
 ''')
 
 def login(response):
-	uid=response.get_field("uid")
-	pwd=response.get_field("pwd", strip=False)
-	userid=response.get_secure_cookie('userid')
-	
-	if uid == '' or pwd == '':
-		response.write(epyc.render("templates/login.html", {"error": "Login failed, check username and password", "logged_in": get_current_user(response)}) )
-		print("failed login")
-	elif uid and pwd:
-		if User.check_password(uid, pwd):
-			response.set_secure_cookie('userid', uid)
-			print("login:"+str(uid))
-			response.redirect('/users/'+str(uid))
-		else:
-			scope = {"error": "Incorrect username or password.", "logged_in": get_current_user(response)}
-			response.write(epyc.render("templates/login.html", scope))
-			print("failed login")
-	elif userid:
+	uid = response.get_field("uid")
+	pwd = response.get_field("pwd", strip=False)
+	userid = response.get_secure_cookie('userid')
+
+	# already logged in!
+	if userid:
 		response.redirect('/users/'+ userid.decode('utf-8'))
-	else:
+
+	elif uid is None or pwd is None:
 		response.write(epyc.render("templates/login.html",{"logged_in":get_current_user(response)}))
+
+	errors = []
+
+	if not uid or not pwd:
+		errors.append("Empty username or password")
+		scope = {"errors": errors, "logged_in": get_current_user(response)}
+		response.write(epyc.render("templates/login.html", scope))
+
+	elif not User.check_password(uid, pwd):
+		errors.append("Incorrect username or password")
+		scope = {"errors": errors, "logged_in": get_current_user(response)}
+		response.write(epyc.render("templates/login.html", scope))
+
+	else:
+		response.set_secure_cookie('userid', uid)
+		response.redirect('/users/%s' % uid)
 
 def logout(response):
 	response.clear_cookie("userid")
@@ -92,45 +98,52 @@ def logout(response):
 ##		if user in users and pas in passw:
 ##			return True
 
-  
+
 def signup(response):
-	fname=response.get_field("fname")
-	lname=response.get_field("lname")
-	email=response.get_field("email")
-	username=response.get_field("username")
-	password=response.get_field("password")
+	fname = response.get_field("fname")
+	lname = response.get_field("lname")
+	email = response.get_field("email")
+	username = response.get_field("username")
+	password = response.get_field("password")
 	# response.redirect('/login')
 	# check for invalid input
-	if not fname:   
-		response.write(epyc.render("templates/login.html", {"error": "Create account failed, first name required", \
-															"logged_in": get_current_user(response), "fname": fname, \
-															"lname": lname, "email": email, "username": username}) )
-	elif not lname:
-		response.write(epyc.render("templates/login.html", {"error": "Create account failed, last name required", \
-															"logged_in": get_current_user(response), "fname": fname, \
-															"lname": lname, "email": email, "username": username}) )
-	elif not re.match("^[-a-zA-Z0-9\+\._]+@([-a-zA-Z0-9]+\.)+[a-zA-Z]+$",email):
-		response.write(epyc.render("templates/login.html", {"error": "Create account failed, valid email address required", \
-															"logged_in": get_current_user(response), "fname": fname, \
-															"lname": lname, "email": email, "username": username}) )
-	elif not re.match("^[a-zA-Z0-9_]+$", username):
-		response.write(epyc.render("templates/login.html", {"error": "Create account failed, username must contain letters, numbers or underscore only", \
-															"logged_in": get_current_user(response), "fname": fname, \
-															"lname": lname, "email": email, "username": username}) )
-	elif len(password) < 6:
-		response.write(epyc.render("templates/login.html", {"error": "Create account failed, password is too short", \
-															"logged_in": get_current_user(response), "fname": fname, \
-															"lname": lname, "email": email, "username": username}) )
-	else: #at testing passed all requirements
-		try: 
+
+	errors = []
+
+	if not fname:
+		errors.append("First name required")
+	if not lname:
+		errors.append("Last name required")
+	if not re.match("^[-a-zA-Z0-9\+\._]+@([-a-zA-Z0-9]+\.)+[a-zA-Z]+$",email):
+		errors.append("Valid email address required")
+	if not re.match("^[a-zA-Z0-9_]+$", username):
+		errors.append("Username can only contain letters, numbers or underscores")
+	if len(password) < 6:
+		errors.append("Password must be longer than 5 characters")
+
+	if not errors:
+		try:
 			User.find_user(username)
-			response.write(epyc.render("templates/login.html", {"error": "Create account failed, username already in use", \
-																"logged_in": get_current_user(response)}) )
 		except UserNotFound:
-			u = User.create_user(fname,lname,username,email,password)
-			u.create_wish_list(str(username)+"'s wishlist")
-			response.set_secure_cookie('userid',username)
-			response.redirect('/users/' + u.username)
+			errors.append("Username is taken")
+
+	if errors:
+		scope = {
+			"errors": errors,
+			"logged_in": get_current_user(response),
+			"fname": fname,
+			"lname": lname,
+			"email": email,
+			"username": username
+		}
+		response.write(epyc.render("templates/login.html", scope))
+
+	else: #at testing passed all requirements
+		u = User.create_user(fname,lname,username,email,password)
+		u.create_wish_list(str(username)+"'s wishlist")
+		response.set_secure_cookie('userid',username)
+		response.redirect('/users/' + u.username)
+
 if __name__ == '__main__':
 	server=Server()
 	#server.register('/home',home)
