@@ -105,7 +105,6 @@ def add_item(response, username):
 
 
 def delete_item(response, username, item_id):
-	print("call delete")
 	user_lists = User.find_user(username).get_user_wish_lists()
 	wishlist = user_lists[0]
 	wishlist.delete_list_item(item_id)
@@ -159,20 +158,37 @@ def edit_user(response, username):
 	filename, content_type, photo = response.get_file('profile-photo')
 	accepted_image_formats = ['jpg', 'jpeg', 'JPEG', 'png', 'PNG', 'gif', 'GIF']
 
+	if not filename or not content_type or not photo:
+		if 'default' not in current_user.image.split('.'):
+			old_image = 'static/images/profiles/' + current_user.image
+
+			try:
+				os.remove(old_image)
+			except:
+				pass
+
+		current_user.image = None
+		current_user.save()
+
+		response.redirect('/users/' + username)
+		return
+
+
 	extension = filename.split('.')[-1]
 	if extension in accepted_image_formats:
 		img = "{}.{}".format(current_user.user_id, extension)
 		profile_img = 'static/images/profiles/' + img
 
-		old_image = 'static/images/profiles/' + current_user.image
-		os.remove(old_image)
+		if 'default' not in current_user.image.split('.'):
+			old_image = 'static/images/profiles/' + current_user.image
+			os.remove(old_image)
 
 		current_user.image = img
 		current_user.save()
 
 		with open(profile_img, mode='wb') as f:
 			f.write(photo)
-			time.sleep(1) # sleep briefly to ensure file is saved correctly on server
+			#time.sleep(1) # sleep briefly to ensure file is saved correctly on server
 
 	response.redirect('/users/' + username)
 

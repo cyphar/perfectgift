@@ -76,6 +76,9 @@ class User:
 		_conn.commit()
 
 	def save(self):
+		self.dob = self.dob or None
+		self.image = self.image or 'default.gif'
+
 		_conn.execute('''UPDATE tbl_users SET fname = ?, lname = ?, username = ?, email = ?, image = ?, dob = ? WHERE user_id = ?''',
 					(self.fname, self.lname, self.username, self.email, self.image, self.dob, self.user_id))
 		_conn.commit()
@@ -89,6 +92,9 @@ class User:
 			wishlist = Wishlist(i[0], i[1], i[2])
 			wishlists.append(wishlist)
 		return wishlists
+
+	def get_profile_image(self):
+		return '/static/images/profiles/' + self.image
 
 
 	def create_wish_list (self, list_name):
