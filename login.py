@@ -2,15 +2,15 @@ import epyc
 import re
 
 from tornado.ncss import Server
-from db.password import passCheck, hashPw, saltGen
-from db.api import User, UserNotFound
+#from db.password import hash_password, generate_salt
+from db.api import User, Wishlist, UserNotFound
 
 # decorator function for checking that the user is logged in
 def logged_in(fn):
 	def inner(response, *args, **kwargs):
 		userid = response.get_secure_cookie('userid')
 		# if logged in then do function
-		if userid is not None:
+		if userid:
 			return fn(response, *args, **kwargs)
 		# if NOT logged in then display login page
 		return response.redirect('/login')
@@ -18,13 +18,15 @@ def logged_in(fn):
 
 def get_current_user(response):
 	userid = response.get_secure_cookie('userid')
+
 	if userid:
 		userid = userid.decode("utf-8")
 	else:
-		userid = False
+		userid = None
+
 	return userid
 
-@logged_in
+#@logged_in
 def is_current_users_wishlist_page(response, username):
 	if get_current_user(response) == username:
 		return True
@@ -56,7 +58,7 @@ def login(response):
 
 	# already logged in!
 	if userid:
-		response.redirect('/users/'+ userid.decode('utf-8'))
+		response.redirect('/users/' + userid.decode('utf-8'))
 		return
 
 	elif uid is None or pwd is None:
@@ -126,8 +128,10 @@ def signup(response):
 
 	if not errors:
 		try:
-			User.find_user(username)
+			User.find(username)
 		except UserNotFound:
+			pass
+		else:
 			errors.append("Username is taken")
 
 	if errors:
@@ -139,13 +143,18 @@ def signup(response):
 			"email": email,
 			"username": username
 		}
+
 		response.write(epyc.render("templates/login.html", scope))
 
-	else: #at testing passed all requirements
-		u = User.create_user(fname,lname,username,email,password)
-		u.create_wish_list(str(username)+"'s wishlist")
-		response.set_secure_cookie('userid',username)
-		response.redirect('/users/' + u.username)
+	else:
+
+		user = User.create(fname, lname, username, email, password)
+		response.set_secure_cookie('userid', user.username)
+
+		listname = "{}'s wishlist'".format(user.username)
+		Wishlist.create(listname, user)
+
+		response.redirect('/users/' + user.username)
 
 if __name__ == '__main__':
 	server=Server()

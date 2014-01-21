@@ -82,8 +82,8 @@
 					<figcaption>{{ product.name }}</figcaption>
 				{% end if %}
 				</div>
-			<p class="product-item-price">{{ product.price }}</p>
-			<p class="product-item-descript">{{ product.description }}</p>
+			<p class="product-item-price">{{ product.price or "" }}</p>
+			<p class="product-item-descript">{{ product.description or "" }}</p>
 			{% if is_current_users_wishlist_page %}
 					<button data-id="{{ product.product_id }}" class="delete"><img src="/static/images/trash.png" alt="Delete"></button>
 					<button onclick="location.href='/users/{{username}}/edit_item/{{ product.product_id }}'" class="edit"><img src="/static/images/pencil.png" alt="Edit"></button>

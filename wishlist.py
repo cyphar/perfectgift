@@ -19,10 +19,14 @@ from ajax import scrape
 from friends import search, friends_list
 
 def format_price(price):
+	if not price:
+		return price
+
 	if re.match(r'^\$?\d{1,3}(,?\d{3})*(\.[0-9]+)?$', price):
 		price = price.replace('$', '').replace(',', '')
 		return "${0:,.2f}".format(float(price))
-	return str(price)
+
+	return price
 
 def display_name(user):
   return "%s %s (%s)" % (user.fname, user.lname, user.username)
@@ -31,24 +35,24 @@ def index(response, username):
 	logged_in = get_current_user(response)
 
 	try:
-		current_user = User.find_user(username)
+		current_user = User.find(username)
 	except UserNotFound:
 		handle_error(response, message="user")
 		return
 
-	user_lists = current_user.get_user_wish_lists()
+	user_lists = current_user.get_wishlists()
 
 	if not user_lists:
-		current_user.create_wish_list(str(username)+"'s wishlist")
-		user_lists = current_user.get_user_wish_lists()
-		#handle_error(response, message="wishlist for the given user")
-		#return
+		wishlist_name = "{}'s wishlist".format(username)
+		Wishlist.create(wishlist_name, current_user)
 
-	# TODO: user_lists index should be dynamicvalue
+		user_lists = current_user.get_wishlists()
+
 	current_wishlist = user_lists[0]
-	products = current_wishlist.get_wish_list_products()
+	products = current_wishlist.get_items()
+
 	for product in products:
-		product.price = format_price(str(product.price))
+		product.price = format_price(product.price)
 
 	error_code = response.get_field('error')
 	errors = []
@@ -57,19 +61,20 @@ def index(response, username):
 		errors.append("Wish name cannot be empty")
 
 	scope = {
-		"username":username,
+		"username": username,
 		"products": products,
 		"listname": current_wishlist.list_name,
 		"logged_in": logged_in,
 		"current_user_fullname": display_name(current_user),
 		"is_current_users_wishlist_page": is_current_users_wishlist_page(response, username),
-		'response': response,
-		'errors': errors,
-		'profile_image_filename': '/static/images/profiles/%s' % current_user.image
+		"response": response,
+		"errors": errors,
+		"profile_image_filename": '/static/images/profiles/%s' % current_user.image
 	}
 
 	if logged_in:
-		logged_in_user = User.find_user(logged_in)
+		logged_in_user = User.find(logged_in)
+
 		scope["mutual_friend"] = logged_in_user.check_friend(current_user.user_id)
 		scope["pending_friend_request"] = logged_in_user.check_pending_friend(current_user.user_id)
 		scope["pending_friend_invite"] = current_user.check_pending_friend(logged_in_user.user_id)
@@ -77,27 +82,36 @@ def index(response, username):
 	response.write(epyc.render("templates/wishlist.html", scope))
 
 def edit(response, username): #WORKING HERE
-	user_lists = User.find_user(username).get_user_wish_lists()
+	user_lists = User.find(username).get_wishlists()
+
 	current_wishlist = user_lists[0]
-	products = current_wishlist.get_wish_list_products()
-	scope = {"username":username, "products": products, "listname":current_wishlist.list_name, "logged_in": get_current_user(response)}
+	products = current_wishlist.get_items()
+
+	scope = {
+		"username": username,
+		"products": products,
+		"listname": current_wishlist.list_name,
+		"logged_in": get_current_user(response)
+	}
+
 	response.write(epyc.render("templates/edit.html", scope))
 
-
 def add_item(response, username):
-	user_lists = User.find_user(username).get_user_wish_lists()
-	# TODO: user_lists index should be dynamicvalue
+	user_lists = User.find(username).get_wishlists()
 	current_wishlist = user_lists[0]
-	new_product_name = response.get_field('wish')
-	new_link = response.get_field('website')
-	new_description = response.get_field('description')
-	new_price = response.get_field('price')
-	new_image = response.get_field('image') or '/static/images/gift_box.png'
+
+	details = {
+		"name": response.get_field('wish'),
+		"image": response.get_field('image') or '/static/images/gift_box.png',
+		"link": response.get_field('website'),
+		"description": response.get_field('description'),
+		"price": response.get_field('price')
+	}
+
 	encoded_string = ""
-	if new_product_name is not "":
-		is_error_msg_hidden = True
-		new_product = Product.create_product(new_image, new_link, new_product_name, new_description, new_price)
-		current_wishlist.add_list_item(new_product.product_id)
+	if details['name'] != "":
+		product = Product.create(**details)
+		current_wishlist.add_item(product)
 	else:
 		encoded_string = urlencode({'error': "0"})
 
@@ -105,51 +119,54 @@ def add_item(response, username):
 
 
 def delete_item(response, username, item_id):
-	user_lists = User.find_user(username).get_user_wish_lists()
+	user_lists = User.find(username).get_wishlists()
 	wishlist = user_lists[0]
-	wishlist.delete_list_item(item_id)
+	wishlist.delete_item(item_id)
 
 	response.redirect('/users/' + username)
 
 def edit_item(response, username, item_id):
 	try:
-		current_user = User.find_user(username)
+		current_user = User.find(username)
 	except UserNotFound:
 		handle_error(response, message="user")
 		return
 
 	if response.request.method == "POST":
-		product = Product.find_product(item_id)
-		product.price = response.get_field('price')
+		product = Product.find(item_id)
+
 		product.name = response.get_field('wish')
-		product.description = response.get_field('description')
-		product.link = response.get_field('website')
-		product.image = response.get_field('image')
-		product.update_product()
-		response.redirect("/users/"+username)
+		product.image = response.get_field('image') or '/static/images/gift_box.png'
+		product.link = response.get_field('website') or None
+		product.description = response.get_field('description') or None
+		product.price = response.get_field('price') or None
+
+		product.save()
+		response.redirect("/users/" + username)
 		return
 
-	user_lists = current_user.get_user_wish_lists()
+	user_lists = current_user.get_wishlists()
 	if not user_lists:
 		handle_error(response, message="wishlist for the given user")
 		return
 
-	# TODO: user_lists index should be dynamicvalue
 	current_wishlist = user_lists[0]
-	scope = {"username":username,
-            "listname": current_wishlist.list_name,
-            "logged_in": current_user,
-            "current_user_fullname": display_name(current_user),
-            "is_current_users_wishlist_page": is_current_users_wishlist_page(response, username),
-            "product": Product.find_product(item_id)
+
+	scope = {
+		"username": username,
+		"listname": current_wishlist.list_name,
+		"logged_in": current_user,
+		"current_user_fullname": display_name(current_user),
+		"is_current_users_wishlist_page": is_current_users_wishlist_page(response, username),
+		"product": Product.find(item_id)
 	}
-	print(scope["product"].image)
+
 	response.write(epyc.render("templates/edit.html", scope))
 
 @logged_in
 def edit_user(response, username):
 	try:
-		current_user = User.find_user(username)
+		current_user = User.find(username)
 	except UserNotFound:
 		handle_error(response, message="user")
 		return
@@ -194,12 +211,12 @@ def edit_user(response, username):
 
 
 def get_item(response, username, item_id):
-	response.redirect("/users/"+username)
+	response.redirect("/users/" + username)
 
 def home(response):
-	response.write(epyc.render("templates/home.html", {"logged_in":get_current_user(response)}))
+	response.write(epyc.render("templates/home.html", {"logged_in": get_current_user(response)}))
 
-def myWishlist(response):
+def my_wishlist(response):
 	if get_current_user(response):
 		response.redirect("/users/" + get_current_user(response))
 	else:
@@ -211,8 +228,9 @@ def add_friend(response, username):
 	if not current_username:
 		response.redirect("/login")
 	else:
-		current = User.find_user(current_username)
-		other = User.find_user(username)
+		current = User.find(current_username)
+		other = User.find(username)
+
 		current.add_friend(other.user_id)
 		response.redirect(response.get_field('redirect'))
 
@@ -221,13 +239,14 @@ def delete_friend(response, username):
 	if not current_username:
 		response.redirect("/login")
 	else:
-		current = User.find_user(current_username)
-		other = User.find_user(username)
+		current = User.find(current_username)
+		other = User.find(username)
+
 		current.delete_friend(other.user_id)
 		response.redirect(response.get_field('redirect'))
 
 def handle_error(response, message='page'):
-	response.write(epyc.render("templates/404.html", {"logged_in":get_current_user(response), "message":message}))
+	response.write(epyc.render("templates/404.html", {"logged_in": get_current_user(response), "message": message}))
 
 #@login.logged_in
 def feed(response):
@@ -255,7 +274,7 @@ def run_server(srvhost='', serverport=8888):
 	server.register('/signup', signup)
 	server.register('/ajax/scrape', scrape.scrape_url)
 	server.register('/', home)
-	server.register('/mywishlist', myWishlist)
+	server.register('/mywishlist', my_wishlist)
 	server.register('/feed', feed)
 	server.register('/search', search)
 	server.register('.*', handle_error)
