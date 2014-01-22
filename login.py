@@ -151,7 +151,7 @@ def signup(response):
 		user = User.create(fname, lname, username, email, password)
 		response.set_secure_cookie('userid', user.username)
 
-		listname = "{}'s wishlist'".format(user.username)
+		listname = "{}'s wishlist".format(user.username)
 		Wishlist.create(listname, user)
 
 		response.redirect('/users/' + user.username)

@@ -75,9 +75,9 @@ def index(response, username):
 	if logged_in:
 		logged_in_user = User.find(logged_in)
 
-		scope["mutual_friend"] = logged_in_user.check_friend(current_user.user_id)
-		scope["pending_friend_request"] = logged_in_user.check_pending_friend(current_user.user_id)
-		scope["pending_friend_invite"] = current_user.check_pending_friend(logged_in_user.user_id)
+		scope["mutual_friend"] = logged_in_user.check_friend(current_user)
+		scope["pending_friend_request"] = logged_in_user.check_pending_friend(current_user)
+		scope["pending_friend_invite"] = current_user.check_pending_friend(logged_in_user)
 
 	response.write(epyc.render("templates/wishlist.html", scope))
 
@@ -231,7 +231,7 @@ def add_friend(response, username):
 		current = User.find(current_username)
 		other = User.find(username)
 
-		current.add_friend(other.user_id)
+		current.add_friend(other)
 		response.redirect(response.get_field('redirect'))
 
 def delete_friend(response, username):
@@ -242,7 +242,7 @@ def delete_friend(response, username):
 		current = User.find(current_username)
 		other = User.find(username)
 
-		current.delete_friend(other.user_id)
+		current.delete_friend(other)
 		response.redirect(response.get_field('redirect'))
 
 def handle_error(response, message='page'):
@@ -255,8 +255,8 @@ def feed(response):
 		"productname": "Green Socks",
 		"firstname": "Marie",
 		"lastname": "Atzarakis",
-		"dob":"31st August"
-		}))
+		"dob": "31st August"
+	}))
 
 def run_server(srvhost='', serverport=8888):
 	server = Server(write_error=handle_error, hostname=srvhost, port=serverport)

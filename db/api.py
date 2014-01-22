@@ -34,7 +34,6 @@ class User:
 		row = cur.fetchone()
 
 		if not row:
-			print("Cannot find {}".format(username))
 			raise UserNotFound('Username {} does not exist'.format(username))
 
 		return cls(**row)
@@ -97,20 +96,9 @@ class User:
 	def get_profile_image(self):
 		return '/static/images/profiles/' + self.image
 
-	####################
-	# WISHLIST METHODS #
-	####################
-
-	def add_wishlist(self, list):
-		_conn.execute('''INSERT INTO tbl_wish_list (list_name, user_id) VALUES (?, ?)''', (list_name, self.user_id))
-		_conn.commit()
-
-		cur = _conn.execute('''SELECT last_insert_rowid()''')
-		return Wishlist(cur.fetchone()['wish_id'], list_name, self.user_id)
-
-	def delete_wish_list(self, list_name):
-		_conn.execute('''DELETE FROM tbl_wish_list WHERE list_name = ? AND user_id = ?''', (list_name, self.user_id))
-		_conn.commit()
+	##########################
+	# QUERY WISHLIST METHODS #
+	##########################
 
 	def get_wishlists(self):
 		cur = _conn.execute('''SELECT wish_id, list_name FROM tbl_wish_list WHERE user_id = ?''', (self.user_id,))
@@ -124,35 +112,39 @@ class User:
 
 		return wishlists
 
-	##################
-	# FRIEND METHODS #
-	##################
-
-	def delete_friend(self, friend):
-		_conn.execute('''DELETE FROM tbl_friends WHERE (f_user_id = ? AND friend_id = ?) OR (f_user_id = ? AND friend_id = ?)''', (self.user_id, friend_id, friend_id, self.user_id))
-		_conn.commit()
+	#########################
+	# MODIFY FRIEND METHODS #
+	#########################
 
 	def add_friend(self, friend):
-		if not self.check_friend(friend_id) == False:
+		if not self.check_friend(friend):
 			_conn.execute('''INSERT INTO tbl_friends (f_user_id, friend_id) VALUES (?, ?)''', (self.user_id, friend.user_id))
 			_conn.commit()
 		else:
 			raise FriendAlreadyAdded('{} has already been added as a friend of {}'.format(friend.username, self.username))
 
-	def check_friend(self, friend_id):
-		cur = _conn.execute('''SELECT COUNT(*) FROM tbl_friends WHERE (f_user_id = ? AND friend_id = ?) OR (f_user_id = ? AND friend_id = ?)''', (self.user_id, friend_id, friend_id, self.user_id))
+	def delete_friend(self, friend):
+		_conn.execute('''DELETE FROM tbl_friends WHERE (f_user_id = ? AND friend_id = ?) OR (f_user_id = ? AND friend_id = ?)''', (self.user_id, friend.user_id, friend.user_id, self.user_id))
+		_conn.commit()
+
+	########################
+	# QUERY FRIEND METHODS #
+	########################
+
+	def check_friend(self, friend):
+		cur = _conn.execute('''SELECT COUNT(*) FROM tbl_friends WHERE (f_user_id = ? AND friend_id = ?) OR (f_user_id = ? AND friend_id = ?)''', (self.user_id, friend.user_id, friend.user_id, self.user_id))
 		count = cur.fetchone()[0]
 
 		return count == 2
 
-	def check_pending_friend(self, friend_id):
-		cur = _conn.execute('''SELECT COUNT(*) FROM tbl_friends WHERE f_user_id = ? AND friend_id = ?''', (self.user_id, friend_id))
+	def check_pending_friend(self, friend):
+		cur = _conn.execute('''SELECT COUNT(*) FROM tbl_friends WHERE f_user_id = ? AND friend_id = ?''', (self.user_id, friend.user_id))
 		count = cur.fetchone()[0]
 
 		return count > 0
 
 	def find_friends(self):
-		cur = _conn.execute('''SELECT f_user_id FROM tbl_friends WHERE friend_id = ? INTERSECT SELECT friend_id FROM tbl_friends WHERE f_user_id = ?''',(self.user_id, self.user_id))
+		cur = _conn.execute('''SELECT f_user_id FROM tbl_friends WHERE friend_id = ? INTERSECT SELECT friend_id FROM tbl_friends WHERE f_user_id = ?''', (self.user_id, self.user_id))
 		rows = cur.fetchall()
 
 		return [User.find_uid(row['f_user_id']) for row in rows]
@@ -197,7 +189,6 @@ class Product:
 	##########################
 
 	def save(self):
-		print("%r %r %r %r" % (self.name, self.image, self.link, self.description))
 		_conn.execute('''UPDATE tbl_products SET name = ?, image = ?, link = ?, description = ?, price = ? WHERE product_id = ?''', (self.name, self.image, self.link, self.description, self.price, self.product_id))
 		_conn.commit()
 
@@ -251,11 +242,20 @@ class Wishlist:
 		_conn.execute('''INSERT INTO tbl_list_item (product_id, list_id, checked) VALUES(?, ?, 0)''', (product.product_id, self.wish_id))
 		_conn.commit()
 
+	def delete_item(self, product_id):
+		_conn.execute('''DELETE FROM tbl_list_item WHERE list_id = ? AND product_id = ?''', (self.wish_id, product_id))
+		_conn.commit()
+
+	##########################
+	# WISHLIST QUERY METHODS #
+	##########################
+
 	def get_items(self):
-		cur = _conn.execute('''SELECT tbl_products.product_id, name, image, link, description, price, tbl_list_item.checked
-							  FROM tbl_products, tbl_list_item, tbl_wish_list
-							  WHERE tbl_products.product_id = tbl_list_item.product_id
-							  AND tbl_list_item.list_id = tbl_wish_list.wish_id AND wish_id = ?''', (self.wish_id,))
+		cur = _conn.execute('''SELECT p.product_id, p.name, p.image, p.link, p.description, p.price, i.checked
+							  FROM tbl_list_item AS i
+								JOIN tbl_products AS p ON i.product_id = p.product_id
+								JOIN tbl_wish_list AS w ON i.list_id = w.wish_id
+							  WHERE w.wish_id = ?''', (self.wish_id,))
 		rows = cur.fetchall()
 
 		items = []
@@ -264,10 +264,6 @@ class Wishlist:
 			items.append(p)
 
 		return items
-
-	def delete_item(self, product_id):
-		_conn.execute('''DELETE FROM tbl_list_item WHERE list_id = ? AND product_id = ?''', (self.wish_id, product_id))
-		_conn.commit()
 
 ####USERS####
 

@@ -11,43 +11,41 @@ locale.setlocale(locale.LC_ALL, '')
 
 @logged_in
 def friends_list(response):
-
 	current_username = get_current_user(response)
-	current_user = User.find_user(current_username)
+	current_user = User.find(current_username)
 
 	friends_list = current_user.find_friends()
-	friends_list = [User.find_user_with_user_id(id) for id in friends_list]
 
-	scope = {'friends':friends_list, 'logged_in':current_username}
-
+	scope = {'friends': friends_list, 'logged_in': current_username}
 	response.write(epyc.render("templates/friends.html", scope))
 
 def search(response):
-	search=response.get_field("search")
-	print(response.get_field("searchr"))
+	search = response.get_field("search")
 	logged_in = get_current_user(response)
+
 	if response.get_field("search"):
-		if response.get_field("searchr")=='people':
-			print('true')
-			friend_sea = '%'+"".join(search)+'%'
-			cur=conn.execute('''SELECT fname, lname, username FROM tbl_users WHERE username like ? or fname like ? or lname like ?''', (friend_sea, friend_sea, friend_sea))
-			rows=cur.fetchall()
-			print(*rows)
-			row2=[]
+		if response.get_field("searchr") == 'people':
+			friend_sea = "%{}%".format("".join(search))
+
+			# XXX: MIGRATE TO DATABASE API!!!
+			cur = conn.execute('''SELECT fname, lname, username FROM tbl_users WHERE username like ? or fname like ? or lname like ?''', (friend_sea, friend_sea, friend_sea))
+			rows = cur.fetchall()
+
+			row2 = []
+
 			for row in  rows:
-				row=" ".join(row)
+				row = " ".join(row)
 				row2.append(row)
-			print(row2)
-			response.write(epyc.render("templates/search.html", {"query": search,
-			"no_results": len(row2) == 0, "results_people": row2, "people_checked": "checked", "items_checked":"", "logged_in": get_current_user(response)}))
-		elif response.get_field("searchr")=='items':
-			print('strue')
-			item_sea='%'+search+'%'
-			print(search)
-			cur=conn.execute('''SELECT image, name, description, price, link from tbl_products WHERE name like (?)''', (item_sea,))
-			rows=cur.fetchall()
-			row2=[]
-			for row in  rows:
+
+			response.write(epyc.render("templates/search.html", {"query": search, "no_results": len(row2) == 0, "results_people": row2, "people_checked": "checked", "items_checked":"", "logged_in": get_current_user(response)}))
+		elif response.get_field("searchr") == 'items':
+			item_sea = "%{}%".format(search)
+
+			cur = conn.execute('''SELECT image, name, description, price, link from tbl_products WHERE name like (?)''', (item_sea,))
+			rows = cur.fetchall()
+
+			row2 = []
+			for row in rows:
 				row_short = []
 				for i in range(len(row)):
 					if i == 3:
@@ -55,19 +53,18 @@ def search(response):
 					else:
 						row_short.append(row[i])
 				row2.append(row_short)
-			print(row2)
-			response.write(epyc.render("templates/search.html", {"query": search,
-			"no_results": True, 'results_items': row2, "people_checked": "", "items_checked":"checked","logged_in": get_current_user(response)}))
 
+			response.write(epyc.render("templates/search.html", {"query": search, "no_results": True, 'results_items': row2, "people_checked": "", "items_checked":"checked","logged_in": get_current_user(response)}))
 	else:
-		print(search)
 		people_or_item = response.get_field("searchr")
-		if people_or_item == "people":
-			response.write(epyc.render("templates/search.html", {"query": "","no_results": False, "results":None, "people_checked": "checked", "items_checked":"", "logged_in": get_current_user(response)}))
-		elif people_or_item == "items":
-			response.write(epyc.render("templates/search.html", {"query": "","no_results": False, "results":None, "people_checked": "", "items_checked":"checked", "logged_in": get_current_user(response)}))
+		scope = {"query": "", "no_results": False, "results": None, "people_checked": "", "items_checked": "", "logged_in": get_current_user(response)}
+
+		if people_or_item == "items":
+			scope["items_checked"] = "checked"
 		else:
-			response.write(epyc.render("templates/search.html", {"query": "","no_results": False, "results":None, "people_checked": "checked", "items_checked":"", "logged_in": get_current_user(response)}))
+			scope["people_checked"] = "checked"
+
+		response.write(epyc.render("templates/search.html", scope))
 
 
 def hello(response, match):
