@@ -2,7 +2,7 @@
 -- NOTE: run clean.sql *before* running this.
 
 CREATE VIRTUAL TABLE tbl_users USING fts4 (
-	user_id INTEGER NOT NULL,
+	--user_id INTEGER NOT NULL,
 
 	fname TEXT NOT NULL, -- First name of user
 	lname TEXT NOT NULL, -- Last name of user
@@ -15,11 +15,11 @@ CREATE VIRTUAL TABLE tbl_users USING fts4 (
 	password TEXT NOT NULL, -- *Hashed* password
 	salt TEXT NOT NULL, -- Salt used for hash
 
-	PRIMARY	KEY (user_id)
+	--PRIMARY KEY (user_id)
 );
 
 CREATE VIRTUAL TABLE tbl_products USING fts4 (
-	product_id INTEGER NOT NULL,
+	--product_id INTEGER NOT NULL,
 	name TEXT NOT NULL,
 
 	image TEXT,
@@ -28,7 +28,7 @@ CREATE VIRTUAL TABLE tbl_products USING fts4 (
 	description TEXT,
 	price TEXT,
 
-	PRIMARY KEY (product_id)
+	--PRIMARY KEY (product_id)
 );
 
 CREATE TABLE tbl_friends (

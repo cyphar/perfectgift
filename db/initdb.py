@@ -11,9 +11,9 @@ def generate_user_row(conn, fname, lname, username, email, passw, dob):
 	#user_row = "INSERT INTO tbl_users (fname, lname, username, email, password, salt) VALUES (		0, 'Barry', 'Schultz', 'bazS', 'bazS@here.now', '3a3b2372dd1f0c0f5e8bdd3196bb29dbcbd7f75a55abb9ba9ab2f60243bcd517', 'x_HCV[`/', '1997-09-01')"
 	salt = generate_salt()
 	p = hash_password(passw, salt)
-	user_row = "INSERT INTO tbl_users (fname, lname, username, email, password, salt, dob) VALUES(?,?,?,?,?,?, ?)"
+	user_row = "INSERT INTO tbl_users (fname, lname, username, email, password, salt, dob) VALUES (?, ?, ?, ?, ?, ?, ?)"
 	try:
-		conn.execute(user_row, (fname, lname, username, email, p, salt, dob ))
+		conn.execute(user_row, (fname, lname, username, email, p, salt, dob))
 	except sqlite3.IntegrityError:
 		pass
 

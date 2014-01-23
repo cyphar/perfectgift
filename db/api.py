@@ -30,7 +30,7 @@ class User:
 
 	@classmethod
 	def find(cls, username):
-		cur = _conn.execute('''SELECT user_id, fname, lname, username, email, image, dob FROM tbl_users WHERE username = ? LIMIT 1''', (username,))
+		cur = _conn.execute('''SELECT rowid AS user_id, fname, lname, username, email, image, dob FROM tbl_users WHERE username = ? LIMIT 1''', (username,))
 		row = cur.fetchone()
 
 		if not row:
@@ -39,18 +39,18 @@ class User:
 		return cls(**row)
 
 	@classmethod
-	def find_uid(cls, user_id):
-		cur = _conn.execute('''SELECT user_id, fname, lname, username, email, image, dob FROM tbl_users WHERE user_id = ? LIMIT 1''', (user_id,))
+	def find_uid(cls, uid):
+		cur = _conn.execute('''SELECT rowid AS user_id, fname, lname, username, email, image, dob FROM tbl_users WHERE rowid = ? LIMIT 1''', (uid,))
 		row = cur.fetchone()
 
 		if not row:
-			raise UserNotFound('Uid {} does not exist'.format(user_id))
+			raise UserNotFound('Uid {} does not exist'.format(uid))
 
 		return cls(**row)
 
 	@classmethod
 	def search(cls, search):
-		cur = _conn.execute('''SELECT user_id FROM tbl_users WHERE tbl_users MATCH ?''', (search,))
+		cur = _conn.execute('''SELECT rowid AS user_id FROM tbl_users WHERE tbl_users MATCH ?''', (search,))
 		rows = cur.fetchall()
 
 		return [cls.find_uid(row['user_id']) for row in rows]
@@ -89,14 +89,14 @@ class User:
 	#######################
 
 	def delete(self):
-		_conn.execute('''DELETE FROM tbl_users WHERE user_id = ?''', (self.user_id,))
+		_conn.execute('''DELETE FROM tbl_users WHERE rowid = ?''', (self.user_id,))
 		_conn.commit()
 
 	def save(self):
 		self.dob = self.dob or None
 		self.image = self.image or 'default.gif'
 
-		_conn.execute('''UPDATE tbl_users SET fname = ?, lname = ?, username = ?, email = ?, image = ?, dob = ? WHERE user_id = ?''', (self.fname, self.lname, self.username, self.email, self.image, self.dob, self.user_id))
+		_conn.execute('''UPDATE tbl_users SET fname = ?, lname = ?, username = ?, email = ?, image = ?, dob = ? WHERE rowid = ?''', (self.fname, self.lname, self.username, self.email, self.image, self.dob, self.user_id))
 		_conn.commit()
 
 	# TODO: Put this in some globals file.
@@ -173,7 +173,7 @@ class Product:
 
 	@classmethod
 	def find(cls, product_id):
-		cur = _conn.execute('''SELECT p.product_id, p.name, p.image, p.link, p.description, p.price, i.checked FROM tbl_products AS p LEFT JOIN tbl_list_item AS i ON p.product_id = i.product_id WHERE p.product_id = ? LIMIT 1''', (product_id,))
+		cur = _conn.execute('''SELECT p.rowid AS product_id, p.name, p.image, p.link, p.description, p.price, i.checked FROM tbl_products AS p LEFT JOIN tbl_list_item AS i ON p.rowid = i.product_id WHERE p.rowid = ? LIMIT 1''', (product_id,))
 		row = cur.fetchone()
 
 		if not row:
@@ -183,7 +183,7 @@ class Product:
 
 	@classmethod
 	def search(cls, search):
-		cur = _conn.execute('''SELECT product_id FROM tbl_products WHERE tbl_products MATCH ?''', (search,))
+		cur = _conn.execute('''SELECT rowid AS product_id FROM tbl_products WHERE tbl_products MATCH ?''', (search,))
 		rows = cur.fetchall()
 
 		return [cls.find(row['product_id']) for row in rows]
@@ -203,11 +203,11 @@ class Product:
 	##########################
 
 	def save(self):
-		_conn.execute('''UPDATE tbl_products SET name = ?, image = ?, link = ?, description = ?, price = ? WHERE product_id = ?''', (self.name, self.image, self.link, self.description, self.price, self.product_id))
+		_conn.execute('''UPDATE tbl_products SET name = ?, image = ?, link = ?, description = ?, price = ? WHERE rowid = ?''', (self.name, self.image, self.link, self.description, self.price, self.product_id))
 		_conn.commit()
 
 	def delete(self):
-		_conn.execute('''DELETE FROM tbl_products WHERE product_id = ?''', (self.product_id,))
+		_conn.execute('''DELETE FROM tbl_products WHERE rowid = ?''', (self.product_id,))
 		_conn.commit()
 
 
@@ -265,9 +265,9 @@ class Wishlist:
 	##########################
 
 	def get_items(self):
-		cur = _conn.execute('''SELECT p.product_id, p.name, p.image, p.link, p.description, p.price, i.checked
+		cur = _conn.execute('''SELECT p.rowid AS product_id, p.name, p.image, p.link, p.description, p.price, i.checked
 							  FROM tbl_list_item AS i
-								JOIN tbl_products AS p ON i.product_id = p.product_id
+								JOIN tbl_products AS p ON i.product_id = p.rowid
 								JOIN tbl_wish_list AS w ON i.list_id = w.wish_id
 							  WHERE w.wish_id = ?''', (self.wish_id,))
 		rows = cur.fetchall()
