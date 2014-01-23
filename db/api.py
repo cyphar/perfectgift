@@ -1,4 +1,6 @@
 import sqlite3
+
+from tornado.log import app_log
 from db.password import hash_password, generate_salt
 
 class UserNotFound(Exception):
@@ -34,7 +36,8 @@ class User:
 		row = cur.fetchone()
 
 		if not row:
-			raise UserNotFound('Username {} does not exist'.format(username))
+			app_log.warn("user with the username {!r} could not be found".format(username))
+			raise UserNotFound('Username {!r} does not exist'.format(username))
 
 		return cls(**row)
 
@@ -44,6 +47,7 @@ class User:
 		row = cur.fetchone()
 
 		if not row:
+			app_log.warn("user with the uid {} could not be found".format(uid))
 			raise UserNotFound('Uid {} does not exist'.format(uid))
 
 		return cls(**row)
@@ -128,6 +132,7 @@ class User:
 			_conn.execute('''INSERT INTO tbl_friends (f_user_id, friend_id) VALUES (?, ?)''', (self.user_id, friend.user_id))
 			_conn.commit()
 		else:
+			app_log.warn("{!r} is already a friend of {!r}".format(friend.username, self.username))
 			raise FriendAlreadyAdded('{} has already been added as a friend of {}'.format(friend.username, self.username))
 
 	def delete_friend(self, friend):
@@ -177,6 +182,7 @@ class Product:
 		row = cur.fetchone()
 
 		if not row:
+			app_log.warn("product {} could not be found".format(product_id))
 			raise ProductNotFound('{} does not exist'.format(product_id))
 
 		return cls(*row)

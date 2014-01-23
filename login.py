@@ -85,25 +85,6 @@ def logout(response):
 	response.clear_cookie("userid")
 	response.redirect('/')
 
-##	userid=response.get_secure_cookie('userid')
-##	if userid is None:
-##		response.redirect('/login')
-##	else:
-##		response.clear_cookie('userid')
-##		response.redirect('/login')
-##class User:
-##	def __init__(self, user, password):
-##		self.user=user
-##		self.password=password
-##	def pas(self):
-##		pas=self.password
-##	def user(self):
-##		user=self.user
-##	def login(user,pas):
-##		if user in users and pas in passw:
-##			return True
-
-
 def signup(response):
 	fname = response.get_field("fname")
 	lname = response.get_field("lname")

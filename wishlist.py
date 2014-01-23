@@ -32,7 +32,7 @@ def format_price(price):
 def display_name(user):
   return "%s %s (%s)" % (user.fname, user.lname, user.username)
 
-def index(response, username):
+def profile(response, username):
 	logged_in = get_current_user(response)
 
 	try:
@@ -53,7 +53,6 @@ def index(response, username):
 	products = current_wishlist.get_items()
 
 	for product in products:
-		print(type(product.price), product.product_id)
 		product.price = format_price(product.price)
 
 	error_code = response.get_field('error')
@@ -83,21 +82,7 @@ def index(response, username):
 
 	response.write(epyc.render("templates/wishlist.html", scope))
 
-def edit(response, username): #WORKING HERE
-	user_lists = User.find(username).get_wishlists()
-
-	current_wishlist = user_lists[0]
-	products = current_wishlist.get_items()
-
-	scope = {
-		"username": username,
-		"products": products,
-		"listname": current_wishlist.list_name,
-		"logged_in": get_current_user(response)
-	}
-
-	response.write(epyc.render("templates/edit.html", scope))
-
+@logged_in
 def add_item(response, username):
 	user_lists = User.find(username).get_wishlists()
 	current_wishlist = user_lists[0]
@@ -119,7 +104,7 @@ def add_item(response, username):
 
 	response.redirect('/users/' + username + "?" + encoded_string)
 
-
+@logged_in
 def delete_item(response, username, item_id):
 	user_lists = User.find(username).get_wishlists()
 	wishlist = user_lists[0]
@@ -127,6 +112,7 @@ def delete_item(response, username, item_id):
 
 	response.redirect('/users/' + username)
 
+@logged_in
 def edit_item(response, username, item_id):
 	try:
 		current_user = User.find(username)
@@ -163,7 +149,7 @@ def edit_item(response, username, item_id):
 		"product": Product.find(item_id)
 	}
 
-	response.write(epyc.render("templates/edit.html", scope))
+	response.write(epyc.render("templates/edit_item.html", scope))
 
 @logged_in
 def edit_user(response, username):
@@ -216,7 +202,8 @@ def get_item(response, username, item_id):
 	response.redirect("/users/" + username)
 
 def home(response):
-	response.write(epyc.render("templates/home.html", {"logged_in": get_current_user(response)}))
+	scope = {"logged_in": get_current_user(response)}
+	response.write(epyc.render("templates/home.html", scope))
 
 def my_wishlist(response):
 	if get_current_user(response):
@@ -224,28 +211,25 @@ def my_wishlist(response):
 	else:
 		response.redirect("/")
 
-
+@logged_in
 def add_friend(response, username):
 	current_username = get_current_user(response)
-	if not current_username:
-		response.redirect("/login")
-	else:
-		current = User.find(current_username)
-		other = User.find(username)
 
-		current.add_friend(other)
-		response.redirect(response.get_field('redirect'))
+	current = User.find(current_username)
+	other = User.find(username)
 
+	current.add_friend(other)
+	response.redirect(response.get_field('redirect'))
+
+@logged_in
 def delete_friend(response, username):
 	current_username = get_current_user(response)
-	if not current_username:
-		response.redirect("/login")
-	else:
-		current = User.find(current_username)
-		other = User.find(username)
 
-		current.delete_friend(other)
-		response.redirect(response.get_field('redirect'))
+	current = User.find(current_username)
+	other = User.find(username)
+
+	current.delete_friend(other)
+	response.redirect(response.get_field('redirect'))
 
 def handle_error(response, message='page'):
 	response.write(epyc.render("templates/404.html", {"logged_in": get_current_user(response), "message": message}))
@@ -263,8 +247,8 @@ def feed(response):
 def run_server(srvhost='', serverport=8888):
 	server = Server(write_error=handle_error, hostname=srvhost, port=serverport)
 
-	server.register('/users/([a-zA-Z0-9_]+)', index) #view users profile
-	server.register('/users/([a-zA-Z0-9_]+)/item', add_item) #add item
+	server.register('/users/([a-zA-Z0-9_]+)', profile)
+	server.register('/users/([a-zA-Z0-9_]+)/item', add_item)
 	server.register('/users/([a-zA-Z0-9_]+)/item/([a-zA-Z0-9_]+)', get_item, delete=delete_item)
 	server.register('/users/([a-zA-Z0-9_]+)/edit_item/([a-zA-Z0-9_]+)', edit_item)
 	server.register('/users/([a-zA-Z0-9_]+)/edit', edit_user)
