@@ -4,7 +4,7 @@ import sqlite3
 from tornado.ncss import Server
 from tornado.log import app_log
 
-from db.api import User, UserNotFound
+from db.api import User, Product, UserNotFound
 from login import  logged_in, get_current_user
 
 @logged_in
