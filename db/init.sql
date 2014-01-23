@@ -1,11 +1,12 @@
 -- Used to create a new wishlist database
 -- NOTE: run clean.sql *before* running this.
 
-CREATE TABLE tbl_users (
+CREATE VIRTUAL TABLE tbl_users USING fts4 (
 	user_id INTEGER NOT NULL,
 
 	fname TEXT NOT NULL, -- First name of user
 	lname TEXT NOT NULL, -- Last name of user
+	dob INTEGER, -- Date of birth (epoch time)
 
 	username TEXT NOT NULL UNIQUE, -- Username
 	email TEXT NOT NULL UNIQUE, -- Email address
@@ -14,11 +15,10 @@ CREATE TABLE tbl_users (
 	password TEXT NOT NULL, -- *Hashed* password
 	salt TEXT NOT NULL, -- Salt used for hash
 
-	dob INTEGER, -- Date of birth (epoch time)
 	PRIMARY	KEY (user_id)
 );
 
-CREATE TABLE tbl_products (
+CREATE VIRTUAL TABLE tbl_products USING fts4 (
 	product_id INTEGER NOT NULL,
 	name TEXT NOT NULL,
 
