@@ -38,7 +38,7 @@ def profile(response, username):
 	try:
 		current_user = User.find(username)
 	except UserNotFound:
-		handle_error(response, message="user")
+		handle_error(response, message="Unable to find the specified user.")
 		return
 
 	user_lists = current_user.get_wishlists()
@@ -117,7 +117,7 @@ def edit_item(response, username, item_id):
 	try:
 		current_user = User.find(username)
 	except UserNotFound:
-		handle_error(response, message="user")
+		handle_error(response, message="Unable to find the specified user.")
 		return
 
 	if response.request.method == "POST":
@@ -135,7 +135,7 @@ def edit_item(response, username, item_id):
 
 	user_lists = current_user.get_wishlists()
 	if not user_lists:
-		handle_error(response, message="wishlist for the given user")
+		handle_error(response, message="Unable to find the given user's wishlist.")
 		return
 
 	current_wishlist = user_lists[0]
@@ -156,7 +156,7 @@ def edit_user(response, username):
 	try:
 		current_user = User.find(username)
 	except UserNotFound:
-		handle_error(response, message="user")
+		handle_error(response, message="Unable to find the specified user.")
 		return
 	# supports image only for now, extend later for profile data changes
 
@@ -231,8 +231,13 @@ def delete_friend(response, username):
 	current.delete_friend(other)
 	response.redirect(response.get_field('redirect'))
 
-def handle_error(response, message='page'):
-	response.write(epyc.render("templates/404.html", {"logged_in": get_current_user(response), "message": message}))
+def handle_error(response, message=""):
+	scope = {
+		"logged_in": get_current_user(response),
+		"message": message
+	}
+
+	response.write(epyc.render("templates/404.html", scope))
 
 #@login.logged_in
 def feed(response):

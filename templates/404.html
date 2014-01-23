@@ -4,13 +4,17 @@
 		{% include head.html %}
 		<title>404 - Page Not Found</title>
 	</head>
- 
+
 	<body class="small-header photo1">
-	{% include header.html %}	  
+	{% include header.html %}
 	<article class="center">
-	  <img src="/static/images/404_gs_not_found.png" />
-	  <h1>404 - Green sheep not found</h1>
-	  <h3>We were unable to find the specified {{ message }}</h3>
+		<img src="/static/images/404_gs_not_found.png" />
+		<h1>404 - Green sheep not found</h1>
+		{% if message %}
+			<h3>{{ message }}</h3>
+		{% else %}
+			<h3>We were unable to find the specified page.</h3>
+		{% end if %}
 	</article>
 	{% include footer.html %}
 	</body>
