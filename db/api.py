@@ -49,6 +49,13 @@ class User:
 		return cls(**row)
 
 	@classmethod
+	def search(cls, search):
+		cur = _conn.execute('''SELECT user_id FROM tbl_users WHERE tbl_users MATCH ?''', (search,))
+		rows = cur.fetchall()
+
+		return [cls.find_uid(row['user_id']) for row in rows]
+
+	@classmethod
 	def create(cls, fname, lname, username, email, password, image=None, dob=None):
 		salt = generate_salt()
 		password_hash = hash_password(password, salt)
@@ -173,6 +180,13 @@ class Product:
 			raise ProductNotFound('{} does not exist'.format(product_id))
 
 		return cls(*row)
+
+	@classmethod
+	def search(cls, search):
+		cur = _conn.execute('''SELECT product_id FROM tbl_products WHERE tbl_products MATCH ?''', (search,))
+		rows = cur.fetchall()
+
+		return [cls.find(row['product_id']) for row in rows]
 
 	@classmethod
 	def create(cls, name, image, link, description, price):
