@@ -7,11 +7,12 @@
 		{% else %}
 		  <title>Home</title>
 		{% end if %}
-		
-		
+
+
 	</head>
   <body class="large-header photo1" >
 	{% include header.html %}
+	{% include error_msg.html %}
 	<article>
 	  {% if not logged_in %}
 		  <a href="/login" id="create-account-button">Create Account Now</a>

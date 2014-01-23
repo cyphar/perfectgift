@@ -6,32 +6,18 @@
 	</head>
 	<body class="small-header photo1">
 		{% include header.html %}
-  	
-			
-		
-		
-	
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+		{% include error_msg.html %}
 		<section id="friendsfeed" class="clearfix">
 				<article>
-		
-		
+
+
 	   <!-- <img src="{{productimage}}" alt="Green Sheep" /><dt>{{ firstname }} wants&nbsp;{{ productname }}{{ price }}</dt>
 		<!--<dd>Here is the blue sheep, and here is the red sheep. Only $5.50 and comes with a special voice recording by James Curran.</dd>
 		 <img src="../static/images/placeholder-product-img.jpg" alt="Green Sheep" /><dt>Where is the Green Sheep?</dt>
 		<dd>Here is the blue sheep, and here is the red sheep. Only $5.50 and comes with a special voice recording by James Curran.</dd>
 		-->
-	 
-	 
+
+
 
 		<h2>Feed</h2><ul id="FeedItems">
 			<li>{{ firstname }} wants&nbsp;{{ productname }}<br><img src="{{ productimage }}"><br>$20</li>
@@ -47,15 +33,15 @@
 			<li>{{ firstname }} wants&nbsp;{{ productname }}<br><img src="{{ productimage }}"><br>$20</li>
 		  <li>{{ firstname }} wants&nbsp;{{ productname }}<br><img src="{{ productimage }}"><br>$20</li>
 
-		
-		</ul>  
-				   
+
+		</ul>
+
 		</article>
 		</section>
-			
-		
-		
-		
+
+
+
+
 		<section id="friendslist" class="clearfix">
 		<article>
 		<h2>Friends</h2>
@@ -67,7 +53,7 @@
 		<li><img src="{{ avatar }}">{{ firstname }}&nbsp;{{ lastname }}&nbsp;{{ dob }}</li>															   </ul>
 		</article>
 		</section>
-		{% include footer.html %}				
+		{% include footer.html %}
 	</body>
 </html>
 

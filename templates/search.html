@@ -4,6 +4,7 @@
 	</head>
 	<body class="small-header photo1">
 		{% include header.html %}
+		{% include error_msg.html %}
 		<article>
 			<form name="search" action="/search" method="get" class="search-form">
 				<input type="search" name="q" placeholder="Who are you looking for? e.g. barry" value="{{query}}">
