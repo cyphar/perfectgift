@@ -109,18 +109,19 @@ class ExprNode(Node):
 
 
 class IfNode(Node):
-	def __init__(self, condition, ifnode, elsenode=None):
-		self.ifnode = ifnode
-		self.elsenode = elsenode
-		self.condition = condition
+	def __init__(self, nodes):
+		# [(cond, node), ...] in order of
+		self.nodes = nodes
 
 	def render(self, scope={}, path="."):
-		try:
-			cond = eval(self.condition, {}, scope)
-		except:
-			cond = False
+		for condition, node in self.nodes:
+			if not condition:
+				return node.render(scope, path)
 
-		if cond:
-			return self.ifnode.render(scope, path)
-		elif self.elsenode:
-			return self.elsenode.render(scope, path)
+			try:
+				cond = eval(condition, {}, scope)
+			except:
+				cond = False
+
+			if cond:
+				return node.render(scope, path)

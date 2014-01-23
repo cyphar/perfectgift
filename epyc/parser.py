@@ -79,10 +79,10 @@ class Parser:
 
 				var, expr = args[:sep].strip(), args[sep + slen:].strip()
 
-				block = self._parse_group(["end for"])
+				block = self._parse_group([["end", "for"]])
 				node = render.ForNode(var, expr, block)
 
-				if not self._check_end(["end for"]):
+				if not self._check_end([["end", "for"]]):
 					raise ParseException("missing {% end for %}")
 
 				self.next(3)
@@ -94,15 +94,31 @@ class Parser:
 					raise ParseException("no predicate for 'if' condition")
 
 				predicate = args
-				ifblock = self._parse_group(["end if", "else"])
-				elseblock = None
 
-				if self._check_end(["else"]):
-					elseblock = self._parse_group(["end if"])
+				ifblock = self._parse_group([["elif", ...], ["else"], ["end", "if"]])
+				blocks = [(predicate, ifblock)]
 
-				node = render.IfNode(predicate, ifblock, elseblock)
+				while self._check_end([["elif", ...], ["else"]]):
+					tokens = self.tokens[self.pos:]
 
-				if not self._check_end(["end if"]):
+					start, tag, close = tokens[:3]
+					tag, *predicate = tag.split()
+					predicate = " ".join(predicate)
+
+					self.next(3)
+					if self._check_end([["else"]]):
+						block = self._parse_group([["end", "if"]])
+						blocks += [(None, block)]
+						break
+
+					else:
+						block = self._parse_group([["elif", ...], ["else"], ["end", "if"]])
+						blocks += [(predicate, block)]
+
+
+				node = render.IfNode(blocks)
+
+				if not self._check_end([["end", "if"]]):
 					raise ParseException("missing {% end if %}")
 
 				self.next(3)
@@ -131,20 +147,43 @@ class Parser:
 			return False
 
 		pos = self.pos
+		tokens = self.tokens[pos:]
 
-		if self.length - pos < 3:
+		# There are no {% ... %} tags left
+		if len(tokens) < 3:
 			return False
 
-		if self.tokens[pos] == "{%":
-			pos += 1
-			tag = self.tokens[pos].split()
-			tag = " ".join([item.strip() for item in tag])
+		start, tag, end = tokens[:3]
 
-			pos += 1
-			if self.tokens[pos] != "%}":
-				return False
+		if start != "{%" or end != "%}":
+			return False
 
-			return tag in ends
+		# Get tag information.
+		tag = tag.split()
+
+		# '...' represents only the part UP TO the '...' is to be matched with the tag information,
+		# as opposed to matching everything in the {% ... %} tags, and the rest will be ignored.
+
+		valids = []
+		for end in ends:
+			full = True
+			if ... in end:
+				where = end.index(...)
+				end = end[:where]
+				full = False
+
+			valids.append((end, full))
+
+		for valid, full in valids:
+			if valid == tag:
+				return True
+
+			if not full:
+				section = tag[:len(valid)]
+				if valid == section:
+					return True
+
+		return False
 
 	def _parse_group(self, ends=None):
 		groups = []
