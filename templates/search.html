@@ -14,19 +14,19 @@
 		  {% if no_results %}
 			<h3 class="search-no-results"><p class="search-center-msg">No search results</p></h3>
 		  {% end if %}
-		  {% if results == [] %}
-			{% if should_have_results != None %}
+		  {% if not results %}
+			{% if should_have_results %}
 				<h3 class="search-no-results"><p class="search-center-msg">No search results</p></h3>
 			{% end if  %}
 		  {% end if %}
-		  {% if results_people != None %}
+		  {% if results_people %}
 			  {% for result in results_people %}
-			  <li class="search-item"><a href="/users/{{result.split()[2]}}"> {{result.split()[0]}} {{" "}} {{result.split()[1]}} </a></li>
+			  <li class="search-item"><a href="/users/{{ result.username }}"> {{ result.fname + " " + result.lname }} </a></li>
 			  {% end for %}
 		  {% end if %}
-		  {% if results_items != None %}
+		  {% if results_items %}
 			  {% for result in results_items %}
-			  <li class="search-item"><a href="{{result.split()[4]}}"> {{result[1]}} </a> - {{result[2]}} <span class="search-item-price-right">{{result[3]}}<span> </li>
+			  <li class="search-item"><a href="#"> {{ result.name }} </a> - {{ result.description }} <span class="search-item-price-right">{{ result.price }}<span> </li>
 			  {% end for %}
 		  {% end if %}
 		  </div>
