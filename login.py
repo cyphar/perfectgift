@@ -69,12 +69,16 @@ def login(response):
 
 	if not uid or not pwd:
 		errors.append("Empty username or password")
-		scope = {"errors": errors, "logged_in": get_current_user(response)}
-		response.write(epyc.render("templates/login.html", scope))
 
 	elif not User.check_password(uid, pwd):
 		errors.append("Incorrect username or password")
-		scope = {"errors": errors, "logged_in": get_current_user(response)}
+
+	if errors:
+		scope = {
+			"errors": errors,
+			"logged_in": get_current_user(response)
+		}
+
 		response.write(epyc.render("templates/login.html", scope))
 
 	else:
@@ -98,12 +102,16 @@ def signup(response):
 
 	if not fname:
 		errors.append("First name required")
+
 	if not lname:
 		errors.append("Last name required")
+
 	if not re.match("^[-a-zA-Z0-9\+\._]+@([-a-zA-Z0-9]+\.)+[a-zA-Z]+$",email):
 		errors.append("Valid email address required")
+
 	if not re.match("^[a-zA-Z0-9_]+$", username):
 		errors.append("Username can only contain letters, numbers or underscores")
+
 	if len(password) < 6:
 		errors.append("Password must be longer than 5 characters")
 
