@@ -18,54 +18,43 @@ def friends_list(response):
 	response.write(epyc.render("templates/friends.html", scope))
 
 def search(response):
-	search = response.get_field("search")
+	search = response.get_field("q")
 	logged_in = get_current_user(response)
 
+	types = {
+		"people": 0,
+		"items": 1
+	}
+
+	tp = types.get(response.get_field("t"), 0)
+
 	if search:
-		if response.get_field("searchr") == 'people':
+		if tp == types['people']:
 			items = User.search(search)
-			scope = {
-				"query": search,
-				"no_results": len(items) == 0,
-				"results_people": items,
-				"people_checked": "checked",
-				"items_checked": "",
-				"logged_in": get_current_user(response)
-			}
-
-			app_log.info("[people found for '%s'] %s" % (search, items))
-			response.write(epyc.render("templates/search.html", scope))
-		elif response.get_field("searchr") == 'items':
+		else:
 			items = Product.search(search)
-			scope = {
-				"query": search,
-				"no_results": len(items) == 0,
-				"results_items": items,
-				"people_checked": "",
-				"items_checked": "checked",
-				"logged_in": get_current_user(response)
-			}
 
-			app_log.info("[items found for '%s'] %s" % (search, items))
-			response.write(epyc.render("templates/search.html", scope))
-	else:
-		people_or_item = response.get_field("searchr")
 		scope = {
-			"query": "",
-			"no_results": False,
-			"results": None,
-			"people_checked": "",
-			"items_checked": "",
+			"query": search,
+			"results": items,
+			"tp": tp,
+			"types": types,
 			"logged_in": get_current_user(response)
 		}
 
-		if people_or_item == "items":
-			scope["items_checked"] = "checked"
-		else:
-			scope["people_checked"] = "checked"
-
+		app_log.info("[%s found for '%s'] %s" % (response.get_field('t'), search, items))
 		response.write(epyc.render("templates/search.html", scope))
 
+	else:
+		scope = {
+			"query": "",
+			"results": [],
+			"tp": tp,
+			"types": types,
+			"logged_in": get_current_user(response)
+		}
+
+		response.write(epyc.render("templates/search.html", scope))
 
 def hello(response, match):
 	response.write(epyc._render('''

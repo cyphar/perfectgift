@@ -1,36 +1,34 @@
 <html>
-  <head>
-	  {% include head.html %}
-  </head>
-  <body class="small-header photo1">
-	  {% include header.html %}
-	  <article>
-		  <form name="search" action="/search" method="get" class="search-form">
-			  <input type="search" name="search" placeholder="Who are you looking for? e.g. barry" value="{{query}}">
-			  <button type="submit">Search</button>
-			  <input type="hidden" name="searchr" value="people">
-		  </form>
-		  <div class="search-item-holder">
-		  {% if no_results %}
-			<h3 class="search-no-results"><p class="search-center-msg">No search results</p></h3>
-		  {% end if %}
-		  {% if not results %}
-			{% if should_have_results %}
+	<head>
+		{% include head.html %}
+	</head>
+	<body class="small-header photo1">
+		{% include header.html %}
+		<article>
+			<form name="search" action="/search" method="get" class="search-form">
+				<input type="search" name="q" placeholder="Who are you looking for? e.g. barry" value="{{query}}">
+				<button type="submit">Search</button>
+				{% if tp == types['people'] %}
+					<input type="hidden" name="t" value="people">
+				{% else %}
+					<input type="hidden" name="t" value="items">
+				{% end if %}
+			</form>
+			<div class="search-item-holder">
+			{% if query and not results %}
 				<h3 class="search-no-results"><p class="search-center-msg">No search results</p></h3>
-			{% end if  %}
-		  {% end if %}
-		  {% if results_people %}
-			  {% for result in results_people %}
-			  <li class="search-item"><a href="/users/{{ result.username }}"> {{ result.fname + " " + result.lname }} </a></li>
-			  {% end for %}
-		  {% end if %}
-		  {% if results_items %}
-			  {% for result in results_items %}
-			  <li class="search-item"><a href="#"> {{ result.name }} </a> - {{ result.description }} <span class="search-item-price-right">{{ result.price }}<span> </li>
-			  {% end for %}
-		  {% end if %}
-		  </div>
-	  </article>
-	  {% include footer.html %}
-  </body>
+			{% end if %}
+			{% if results %}
+				{% for result in results %}
+					{% if tp == types['people'] %}
+						<li class="search-item"><a href="/users/{{ result.username }}"> {{ result.fname + " " + result.lname }} </a></li>
+					{% else %}
+						<li class="search-item"><a href="#">{{ result.name }}</a> - {{ result.description }}<span class="search-item-price-right">{{ result.price }}<span> </li>
+					{% end if %}
+				{% end for %}
+			{% end if %}
+			</div>
+		</article>
+		{% include footer.html %}
+	</body>
 </html>
