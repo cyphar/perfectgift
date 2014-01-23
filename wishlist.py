@@ -22,6 +22,7 @@ def format_price(price):
 	if not price:
 		return price
 
+	price = str(price)
 	if re.match(r'^\$?\d{1,3}(,?\d{3})*(\.[0-9]+)?$', price):
 		price = price.replace('$', '').replace(',', '')
 		return "${0:,.2f}".format(float(price))
@@ -52,6 +53,7 @@ def index(response, username):
 	products = current_wishlist.get_items()
 
 	for product in products:
+		print(type(product.price), product.product_id)
 		product.price = format_price(product.price)
 
 	error_code = response.get_field('error')

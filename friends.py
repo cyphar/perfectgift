@@ -1,13 +1,11 @@
 import epyc
 import sqlite3
-import locale
 
 from tornado.ncss import Server
+from tornado.log import app_log
+
 from db.api import User, UserNotFound
 from login import  logged_in, get_current_user
-
-conn = sqlite3.connect("wishlist.db")
-locale.setlocale(locale.LC_ALL, '')
 
 @logged_in
 def friends_list(response):
@@ -23,41 +21,43 @@ def search(response):
 	search = response.get_field("search")
 	logged_in = get_current_user(response)
 
-	if response.get_field("search"):
+	if search:
 		if response.get_field("searchr") == 'people':
-			friend_sea = "%{}%".format("".join(search))
+			items = User.search(search)
+			scope = {
+				"query": search,
+				"no_results": len(items) == 0,
+				"results_people": items,
+				"people_checked": "checked",
+				"items_checked": "",
+				"logged_in": get_current_user(response)
+			}
 
-			# XXX: MIGRATE TO DATABASE API!!!
-			cur = conn.execute('''SELECT fname, lname, username FROM tbl_users WHERE username like ? or fname like ? or lname like ?''', (friend_sea, friend_sea, friend_sea))
-			rows = cur.fetchall()
-
-			row2 = []
-
-			for row in  rows:
-				row = " ".join(row)
-				row2.append(row)
-
-			response.write(epyc.render("templates/search.html", {"query": search, "no_results": len(row2) == 0, "results_people": row2, "people_checked": "checked", "items_checked":"", "logged_in": get_current_user(response)}))
+			app_log.info("[people found for '%s'] %s" % (search, items))
+			response.write(epyc.render("templates/search.html", scope))
 		elif response.get_field("searchr") == 'items':
-			item_sea = "%{}%".format(search)
+			items = Product.search(search)
+			scope = {
+				"query": search,
+				"no_results": len(items) == 0,
+				"results_items": items,
+				"people_checked": "",
+				"items_checked": "checked",
+				"logged_in": get_current_user(response)
+			}
 
-			cur = conn.execute('''SELECT image, name, description, price, link from tbl_products WHERE name like (?)''', (item_sea,))
-			rows = cur.fetchall()
-
-			row2 = []
-			for row in rows:
-				row_short = []
-				for i in range(len(row)):
-					if i == 3:
-						row_short.append(locale.currency(row[i]))
-					else:
-						row_short.append(row[i])
-				row2.append(row_short)
-
-			response.write(epyc.render("templates/search.html", {"query": search, "no_results": True, 'results_items': row2, "people_checked": "", "items_checked":"checked","logged_in": get_current_user(response)}))
+			app_log.info("[items found for '%s'] %s" % (search, items))
+			response.write(epyc.render("templates/search.html", scope))
 	else:
 		people_or_item = response.get_field("searchr")
-		scope = {"query": "", "no_results": False, "results": None, "people_checked": "", "items_checked": "", "logged_in": get_current_user(response)}
+		scope = {
+			"query": "",
+			"no_results": False,
+			"results": None,
+			"people_checked": "",
+			"items_checked": "",
+			"logged_in": get_current_user(response)
+		}
 
 		if people_or_item == "items":
 			scope["items_checked"] = "checked"
