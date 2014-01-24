@@ -13,17 +13,13 @@
 
 		{% if logged_in and not is_current_users_wishlist_page %}
 			{% if mutual_friend %}
-				<a href="/delete_friend/{{username}}?redirect={{response.request.uri}}" type='submit' id='add_friend' />Delete Friend</a>
-			{% else %}
-				{% if pending_friend_request %} {# we sent request #}
-					<a href="/delete_friend/{{username}}?redirect={{response.request.uri}}" type='submit' id='add_friend' />Cancel Friend Request</a>
-				{% else %}
-					{% if pending_friend_invite %} {# received request #}
-						<a href="/add_friend/{{username}}?redirect={{response.request.uri}}" type='submit' id='add_friend' />Accept Friend Request</a>
-					{% else %} {# no friend request in either direction #}
-						<a href="/add_friend/{{username}}?redirect={{response.request.uri}}" type='submit' id='add_friend' />Add Friend</a>
-					{% end if %}
-				{% end if %}
+				<a href="/delete_friend/{{ username }}?redirect={{ response.request.uri }}" type='submit' id='add_friend' />Delete Friend</a>
+			{% elif pending_friend_request %} {# we sent request #}
+				<a href="/delete_friend/{{ username }}?redirect={{ response.request.uri }}" type='submit' id='add_friend' />Cancel Friend Request</a>
+			{% elif pending_friend_invite %} {# received request #}
+				<a href="/add_friend/{{ username }}?redirect={{ response.request.uri }}" type='submit' id='add_friend' />Accept Friend Request</a>
+			{% else %} {# no friend request in either direction #}
+				<a href="/add_friend/{{ username }}?redirect={{ response.request.uri }}" type='submit' id='add_friend' />Add Friend</a>
 			{% end if %}
 		{% end if %}
 			<section id="user-data" class="clearfix">
@@ -71,22 +67,22 @@
 			{% for product in products %}
 				<div class="item">
 				<figure>
-				<img class="product-img" src="{{ product.image }}" />
-				<div class="item-title">
-				{% if product.link %}
-					<a href="{{ product.link }}" ><img class="item-link-out" src="/static/images/arrow.png" alt="Link Out" title="Link Out"/></a>
-				{% end if %}
-				{% if product.checked %}
-					<figcaption><strike>{{ product.name }}</strike></figcaption>
-				{% else %}
-					<figcaption>{{ product.name }}</figcaption>
-				{% end if %}
-				</div>
-			<p class="product-item-price">{{ product.price or "" }}</p>
-			<p class="product-item-descript">{{ product.description or "" }}</p>
-			{% if is_current_users_wishlist_page %}
-					<button data-id="{{ product.product_id }}" class="delete"><img src="/static/images/trash.png" alt="Delete"></button>
-					<button onclick="location.href='/users/{{username}}/edit_item/{{ product.product_id }}'" class="edit"><img src="/static/images/pencil.png" alt="Edit"></button>
+					<img class="product-img" src="{{ product.image }}" />
+					<div class="item-title">
+					{% if product.link %}
+						<a href="{{ product.link }}" ><img class="item-link-out" src="/static/images/arrow.png" alt="Link Out" title="Link Out"/></a>
+					{% end if %}
+					{% if product.checked %}
+						<figcaption><strike>{{ product.name }}</strike></figcaption>
+					{% else %}
+						<figcaption>{{ product.name }}</figcaption>
+					{% end if %}
+					</div>
+					<p class="product-item-price">{{ product.price or "" }}</p>
+					<p class="product-item-descript">{{ product.description or "" }}</p>
+					{% if is_current_users_wishlist_page %}
+						<button data-id="{{ product.product_id }}" class="delete"><img src="/static/images/trash.png" alt="Delete"></button>
+						<button onclick="location.href='/users/{{username}}/edit_item/{{ product.product_id }}'" class="edit"><img src="/static/images/pencil.png" alt="Edit"></button>
 					{% end if %}
 				 </figure>
 			 </div>
