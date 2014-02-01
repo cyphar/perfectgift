@@ -18,16 +18,8 @@ RUN apt-get upgrade -y
 # Install perfectgift server dependencies. #
 ############################################
 
-# Install python3.
-RUN apt-get install -y python3
-
-# Install pillow's dependencies.
-RUN apt-get install -y git python3-dev python3-setuptools libjpeg8 zlib1g libtiff4 libfreetype6 liblcms2-2 libwebp4
-
-# Pull, build and install pillow from the git repo.
-RUN rm -rf /tmp/pillow-install && mkdir -p /tmp/pillow-install
-RUN git clone git://github.com/python-imaging/Pillow.git /tmp/pillow-install
-RUN cd /tmp/pillow-install && python3 setup.py install
+# Install python3 and pillo.
+RUN apt-get install -y python3 python3-imaging
 
 ###################$######################
 # Install and configure perfectgift app. #
