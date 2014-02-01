@@ -4,7 +4,7 @@
 ###############################################
 
 FROM ubuntu:13.04
-MAINTAINER cyphar <cyphar@cyphar.com>
+MAINTAINER "cyphar <cyphar@cyphar.com>"
 
 ##################
 # Update server. #
