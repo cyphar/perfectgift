@@ -3,28 +3,46 @@
 import re
 import os
 import sqlite3
+import random
+import argparse
 
-from random import randint
 from password import hash_password, generate_salt
-
-def generate_user_row(conn, fname, lname, username, email, passw, dob):
-	#user_row = "INSERT INTO tbl_users (fname, lname, username, email, password, salt) VALUES (		0, 'Barry', 'Schultz', 'bazS', 'bazS@here.now', '3a3b2372dd1f0c0f5e8bdd3196bb29dbcbd7f75a55abb9ba9ab2f60243bcd517', 'x_HCV[`/', '1997-09-01')"
-	salt = generate_salt()
-	p = hash_password(passw, salt)
-	user_row = "INSERT INTO tbl_users (fname, lname, username, email, password, salt, dob) VALUES (?, ?, ?, ?, ?, ?, ?)"
-	try:
-		conn.execute(user_row, (fname, lname, username, email, p, salt, dob))
-	except sqlite3.IntegrityError:
-		pass
 
 def getpath(fname):
 	dirname = os.path.dirname(__file__)
 	return os.path.join(dirname, fname)
 
-def initdb():
-	open("wishlist.db", "w")
-	conn = sqlite3.connect("wishlist.db")
+def generate_fake_users(conn):
+	names = []
+	with open(getpath("random_names.txt")) as f:
+		names = [name.strip() for name in f]
 
+	for i in range(len(names)):
+		fname, lname = random.sample(names, 2)
+		username = (fname[0] + lname).lower()
+
+		email = "{}{:03}@yoloteamfour.com".format(username, random.randint(0, 100))
+
+		salt = generate_salt()
+		password = username[::-1]
+		password = hash_password(password, salt)
+
+		dob = "{:04}-{:02}-{:02}".format(random.randint(1970, 2000), random.randint(1, 12), random.randint(1, 28))
+
+		try:
+			conn.execute("""INSERT INTO tbl_users (fname, lname, username, email, password, salt, dob) VALUES (?, ?, ?, ?, ?, ?, strftime('%s', ?))""",
+					(fname, lname, username, email, password, salt, dob))
+		except sqlite3.IntegrityError:
+			pass
+
+	conn.commit()
+
+def initdb(dbfile='wishlist.db', fake=True):
+	# Clear the file.
+	with open(dbfile, "w") as f:
+		pass
+
+	conn = sqlite3.connect(dbfile)
 	script = ""
 
 	with open(getpath("clean.sql")) as f:
@@ -33,46 +51,24 @@ def initdb():
 	with open(getpath("init.sql")) as f:
 		script += f.read()
 
-	with open(getpath("fake.sql")) as f:
-		script += f.read()
-
 	conn.executescript(script)
 	conn.commit()
 
-	#populate users
-	names = []
-	emails = []
-	usernames = []
-	passwords = []
+	if fake:
+		with open(getpath("fake.sql")) as f:
+			conn.executescript(f.read())
+			conn.commit()
 
-	with open(getpath("random_names.txt")) as n:
-		for j in n:
-			j = j.rstrip()
-			names.append(j)
+		generate_fake_users(conn)
 
-	for i in names:
-		email = i + str(randint(0,10)) + str(randint(0,10)) +str(randint(0,10)) +str(randint(0,10)) +"@.yoloteamfour.com"
-		emails.append(email)
-		username = i[:randint(2,4)] + str(randint(0,10))
-		usernames.append(username)
-		password = i[::-1]
-		passwords.append(password)
-
-	i = 0
-	while i < len(emails):
-		random_num = randint(0, len(names) -1 )
-		fname_index = names[randint(0,len(names) - 1)]
-		lname_index = names[randint(0,len(names) - 1)]
-		username_index = usernames[random_num]
-		email_index = emails[random_num]
-		password_index = passwords[random_num]
-		generate_user_row(conn, fname_index, lname_index, username_index, email_index, password_index, str(randint(1900,2000)) + "-" + str(randint(0, 12)) + "-" + str(randint(0, 31)))
-		i += 1
-
-	conn.commit()
 	conn.close()
 
 if __name__ == "__main__":
-	initdb()
+	parser = argparse.ArgumentParser(description="Generate the 'perfectgift.com' sqlite database.")
+	parser.add_argument('-d', '--dbfile', help="path to database file to be created", type=str, default='wishlist.db')
+	parser.add_argument('-f', '--fake', help="generate fake users, wishlists, products and friends", action="store_true")
+	args = parser.parse_args()
+
+	initdb(args.dbfile, args.fake)
 	#import cProfile
 	#print(cProfile.run("initdb()"))
