@@ -18,12 +18,12 @@ RUN apt-get upgrade -y
 # Install perfectgift server dependencies. #
 ############################################
 
-# Install python3 and pillo.
+# Install python3 and pillow.
 RUN apt-get install -y python3 python3-imaging
 
-###################$######################
+##########################################
 # Install and configure perfectgift app. #
-####################$#####################
+##########################################
 
 # Set up perfectgift server directory.
 RUN mkdir -p /srv/perfectgift
