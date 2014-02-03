@@ -2,8 +2,6 @@
 
 import epyc
 import html
-import time
-import json
 import re
 import argparse
 import os
@@ -30,7 +28,7 @@ def format_price(price):
 	return price
 
 def display_name(user):
-  return "%s %s (%s)" % (user.fname, user.lname, user.username)
+	return "%s %s (%s)" % (user.fname, user.lname, user.username)
 
 def profile(response, username):
 	logged_in = get_current_user(response)
@@ -193,7 +191,6 @@ def edit_user(response, username):
 
 		with open(profile_img, mode='wb') as f:
 			f.write(photo)
-			#time.sleep(1) # sleep briefly to ensure file is saved correctly on server
 
 	response.redirect('/users/' + username)
 

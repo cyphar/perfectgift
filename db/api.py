@@ -272,10 +272,10 @@ class Wishlist:
 
 	def get_items(self):
 		cur = _conn.execute('''SELECT p.rowid AS product_id, p.name, p.image, p.link, p.description, p.price, i.checked
-							  FROM tbl_list_item AS i
+								FROM tbl_list_item AS i
 								JOIN tbl_products AS p ON i.product_id = p.rowid
 								JOIN tbl_wish_list AS w ON i.list_id = w.wish_id
-							  WHERE w.wish_id = ?''', (self.wish_id,))
+								WHERE w.wish_id = ?''', (self.wish_id,))
 		rows = cur.fetchall()
 
 		items = []
