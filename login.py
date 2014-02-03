@@ -2,18 +2,17 @@ import epyc
 import re
 
 from tornado.ncss import Server
-#from db.password import hash_password, generate_salt
 from db.api import User, Wishlist, UserNotFound
 
 # decorator function for checking that the user is logged in
-def logged_in(fn):
+def logged_in(func, url='/login'):
 	def inner(response, *args, **kwargs):
 		userid = response.get_secure_cookie('userid')
-		# if logged in then do function
+
 		if userid:
-			return fn(response, *args, **kwargs)
-		# if NOT logged in then display login page
-		return response.redirect('/login')
+			return func(response, *args, **kwargs)
+
+		response.redirect(url)
 	return inner
 
 def get_current_user(response):
@@ -32,25 +31,6 @@ def is_current_users_wishlist_page(response, username):
 		return True
 	return False
 
-
-#commented out as we don't want landing page to be login page
-#def home(response):
-#	if response.get_secure_cookie('userid') is None:
-#		response.redirect('/login')
-#	else:
-#		response.write('hello world')
-
-@logged_in
-def hello(response):
-	response.write('''
-	<html>
-	<header>:)</header>
-	<body>
-	<h1>Hellos peoples of the internets</h1>
-	</body>
-	</html>
-''')
-
 def login(response):
 	uid = response.get_field("uid")
 	pwd = response.get_field("pwd", strip=False)
@@ -62,7 +42,8 @@ def login(response):
 		return
 
 	elif uid is None or pwd is None:
-		response.write(epyc.render("templates/login.html",{"logged_in":get_current_user(response)}))
+		scope = {"logged_in": get_current_user(response)}
+		response.write(epyc.render("templates/login.html", scope))
 		return
 
 	errors = []
@@ -95,7 +76,6 @@ def signup(response):
 	email = response.get_field("email")
 	username = response.get_field("username")
 	password = response.get_field("password")
-	# response.redirect('/login')
 	# check for invalid input
 
 	errors = []
@@ -106,10 +86,10 @@ def signup(response):
 	if not lname:
 		errors.append("Last name required")
 
-	if not re.match("^[-a-zA-Z0-9\+\._]+@([-a-zA-Z0-9]+\.)+[a-zA-Z]+$",email):
+	if not re.match(r"^[-a-zA-Z0-9+\._]+@([-a-zA-Z0-9]+\.)+[a-zA-Z]+$", email):
 		errors.append("Valid email address required")
 
-	if not re.match("^[a-zA-Z0-9_]+$", username):
+	if not re.match(r"^[a-zA-Z0-9_]+$", username):
 		errors.append("Username can only contain letters, numbers or underscores")
 
 	if len(password) < 6:
@@ -144,12 +124,3 @@ def signup(response):
 		Wishlist.create(listname, user)
 
 		response.redirect('/users/' + user.username)
-
-if __name__ == '__main__':
-	server=Server()
-	#server.register('/home',home)
-	server.register('/', hello)
-	server.register('/login', login)
-	server.register('/logout', logout)
-	server.register('/signup',signup)
-	server.run()
