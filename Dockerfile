@@ -21,11 +21,11 @@
 
 ###############################################
 # Dockerfile for the perfectgift tornado app. #
-# Based on ubuntu 13.04                       #
+# Based on ubuntu 14.04                       #
 ###############################################
 
-FROM ubuntu:13.04
-MAINTAINER "cyphar <cyphar@cyphar.com>"
+FROM ubuntu:14.04
+MAINTAINER "Cyphar <cyphar@cyphar.com>"
 
 ##################
 # Update server. #
