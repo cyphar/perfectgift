@@ -29,17 +29,25 @@ RUN apt-get upgrade -y
 # Install python3 and pillow.
 RUN apt-get install -y python3 python3-imaging
 
-# Set up perfectgift server directory.
-RUN mkdir -p -- /srv/www /srv/db
+# Set up cyphar.com server directory.
+RUN mkdir -p -- /srv/db /srv/www
 WORKDIR /srv/www
 
-# Copy over the perfectgift app source.
+# Set up server user.
+RUN useradd -U -M -s /bin/nologin -- drone
+RUN passwd -d -- drone
+
+# Change ownership.
+RUN chown drone:drone -- /srv/www /srv/db
+USER drone
+
+# Copy over the cyphar.com app source.
 COPY . /srv/www
 
 # Initialise the sqlite database.
 RUN python3 db/initdb.py -d /srv/db/wishlist.db
 
 # Set up perfectgift server and port config.
-EXPOSE 80
-ENTRYPOINT ["python3", "server.py", "-H*", "-p80"]
+EXPOSE 5000
+ENTRYPOINT ["python3", "server.py", "-H0.0.0.0", "-p5000"]
 CMD ["-d/srv/db/wishlist.db"]
