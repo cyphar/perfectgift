@@ -34,8 +34,12 @@ class ProductNotFound(Exception):
 class FriendAlreadyAdded(Exception):
 	pass
 
-_conn = sqlite3.connect("wishlist.db")
-_conn.row_factory = sqlite3.Row
+_conn = None
+
+def init(dbfile="wishlist.db"):
+	global _conn
+	_conn = sqlite3.connect(dbfile)
+	_conn.row_factory = sqlite3.Row
 
 class User:
 	def __init__(self, user_id, fname, lname, username, email, image=None, dob=None):

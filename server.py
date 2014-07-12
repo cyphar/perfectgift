@@ -29,7 +29,7 @@ import os
 from tornado.ncss import Server
 
 from login import *
-from db.api import User, Wishlist, Product, UserNotFound
+from db.api import User, Wishlist, Product, UserNotFound, init
 
 from urllib.parse import urlencode
 from ajax import scrape
@@ -266,8 +266,10 @@ def feed(response):
 		"dob": "31st August"
 	}))
 
-def run_server(srvhost='', serverport=8888):
-	server = Server(write_error=handle_error, hostname=srvhost, port=serverport)
+def run_server(srvhost='', srvport=5000, dbfile='wishlist.db'):
+	init(dbfile)
+
+	server = Server(write_error=handle_error, hostname=srvhost, port=srvport)
 
 	server.register('/users/([a-zA-Z0-9_]+)', profile)
 	server.register('/users/([a-zA-Z0-9_]+)/item', add_item)
@@ -291,8 +293,9 @@ def run_server(srvhost='', serverport=8888):
 
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser(description="Start a tornado server, running the 'perfectgift.com' website.")
-	parser.add_argument('-p', '--port', type=int, default=8888)
+	parser.add_argument('-d', '--dbfile', type=str, default='wishlist.db')
+	parser.add_argument('-p', '--port', type=int, default=5000)
 	parser.add_argument('-H', '--host', type=str, default='')
 	args = parser.parse_args()
 
-	run_server(args.host, args.port)
+	run_server(args.host, args.port, args.dbfile)

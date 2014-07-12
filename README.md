@@ -9,7 +9,7 @@ The recommended usage is through `docker`. However, you can run the server using
 script:
 
 ```
-python3 ./wishlist.py [-h] [-p PORT] [-H HOST]
+python3 ./server.py [-h] [-p PORT] [-H HOST]
 ```
 
 The above script expects the database to have been initialised (which can be done by running `db/initdb.py`).
