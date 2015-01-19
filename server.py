@@ -254,6 +254,7 @@ def handle_error(response, message=""):
 		"message": message
 	}
 
+	response.set_status(404)
 	response.write(epyc.render("templates/404.html", scope))
 
 #@login.logged_in
